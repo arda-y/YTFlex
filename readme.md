@@ -7,7 +7,7 @@
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Deployment ready, easy to use and fast YouTube downloader API written in Python with CDN and reverse proxy setup guide.
-
+ 
 [![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](<https://www.python.org/>)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](<https://www.docker.com/>)
 [![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)](<https://www.nginx.com/>)
