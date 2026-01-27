@@ -22,12 +22,22 @@ async def purge_old_files():
         max_file_age = config.get("MAX_FILE_AGE")
 
         await asyncio.sleep(60)  # check every minute
-        for file in os.listdir(download_path):
-            # get creation time of file
-            last_change = os.path.getctime(os.path.join(download_path, file))
-            now = time.time()
-            file_age = int(now - last_change)
-            # print(file, file_age)
-            if file_age > max_file_age:
-                print(f"Deleting {file}, {file_age} seconds old")
-                os.remove(os.path.join(download_path, file))
+        for folder in os.listdir(download_path):
+            folder_path = os.path.join(download_path, folder)
+            if not os.path.isdir(folder_path):
+                continue
+
+            for file in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file)
+                # get creation time of file
+                last_change = os.path.getctime(file_path)
+                now = time.time()
+                file_age = int(now - last_change)
+
+                if file_age > max_file_age:
+                    print(f"Deleting {file}, {file_age} seconds old")
+                    os.remove(file_path)
+
+            # Remove parent directory if empty
+            if not os.listdir(folder_path):
+                os.rmdir(folder_path)

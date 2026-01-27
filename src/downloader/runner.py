@@ -99,9 +99,6 @@ def download_files(
             download_info.append([])
             continue
 
-        # format title
-        video.title = format_title(video.title)
-
         # this function will create the required options for yt-dlp
         # regardless of whether the request is for a video or audio file
         # by checking if the request is for a video or audio file internally
@@ -116,9 +113,9 @@ def download_files(
         ydl.download([video.url])
         last_downloaded_dir: str = filename_collector.filenames[-1]
         filename: str = os.path.basename(last_downloaded_dir)
+        filedir: str = os.path.dirname(last_downloaded_dir)
 
-        cdn_link: str = create_download_link(filename)
-
+        cdn_link: str = create_download_link(filedir, filename)
         download_info.append(
             create_response(cdn_link, video.thumbnail, filename, video.duration, False)
         )
