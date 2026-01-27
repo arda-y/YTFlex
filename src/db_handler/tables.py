@@ -81,4 +81,6 @@ class Api_Key(_Base):
     expires_at = Column(DateTime, default=_default_expiration)
 
 
+# Create all tables in the database
+# This is equivalent to "Create Table" statements in raw SQL
 _Base.metadata.create_all(_engine)

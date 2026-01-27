@@ -148,8 +148,7 @@ If you get a JSON response with the following content, then you are good to go!
 * [x] Restructure the backend to be more modular
 * [x] Add option to download playlists
 * [x] Allow passing video or playlist id's as a parameter instead of a link
-* [ ] Add a control block before downloads to prevent redownloading same files
-* [ ] Anonymize the file access links
+* [x] Anonymize the file access links
 * [ ] Add a frontend
 * [ ] Create a special message if:
   * [x] The file is not available for download, or if the link is invalid

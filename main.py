@@ -13,7 +13,6 @@ import config
 # rebasing the imports for future changes, bare with me for a while
 from src.api_handler.routes import *
 
-
 if __name__ == "__main__":
     port = config.get("PORT")
     root_path = config.get("ROOT_PATH", "/ytflex")

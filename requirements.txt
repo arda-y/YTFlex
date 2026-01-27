@@ -1,3 +1,4 @@
+requests # base for requesting stuff
 uvicorn # asgi server
 fastapi # asgi framework
 yt_dlp # youtube-dl fork

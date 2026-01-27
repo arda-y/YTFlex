@@ -5,7 +5,6 @@ Utility file to extract metadata from a video.
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from src.downloader.utils.video_info import VideoInfo
-from src.downloader.utils.format_title import format_title
 import config
 
 
@@ -36,5 +35,4 @@ def extract_info(url: str):
     except KeyError:
         duration = -1
 
-    title = format_title(title)
     return VideoInfo(title=title, duration=duration, url=url, thumbnail=thumbnail)

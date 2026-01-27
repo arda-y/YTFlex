@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.api_handler.side_processes.base import purge_old_files
 import config
 
-
 app = FastAPI(docs_url="/docs", redoc_url=None)
 origins = config.get("ALLOWED_DOMAINS")
 

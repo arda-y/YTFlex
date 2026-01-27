@@ -31,7 +31,7 @@ def ydl_opts_builder(
     download_path = "./mountpoint/downloads"
     max_file_size = config.get("MAX_FILE_SIZE")
     show_yt_dlp_output = config.get("SHOW_YT_DLP_OUTPUT")
-
+    
     if is_video_request:
         # format string for yt-dlp
         preferred_res = find_appropriate_res(preferred_res)
