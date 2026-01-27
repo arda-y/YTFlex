@@ -1,9 +1,7 @@
 # all values can be changed to your liking, provided you know what you are doing
-version: '3'
-
 services:
   ytflex:
-    image: ytflex:latest
+    build: .
     container_name: ytflex
     restart: always
     ports:
