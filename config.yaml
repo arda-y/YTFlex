@@ -12,8 +12,8 @@ PORT: 2002 # type: int
 # The resolutions the API can attempt to download.
 # Comment out any resolution you don't want to be available.
 RES_LIST: # type: list[int]
-  # - 2160
-  # - 1440
+  - 2160
+  - 1440
   - 1080
   - 720
   - 480
@@ -31,7 +31,7 @@ MAX_FILE_SIZE: 200 # type: int
 # The IP or domain to use when generating the download link.
 # Has no effect on nginx or docker command, but is used in the API message returned.
 # Passing environment variable from docker run command will override this.
-IP_OR_DOMAIN: "https://ihateall.tech" # type: str
+IP_OR_DOMAIN: "https://smelf.duckdns.org" # type: str
 
 # Max file age in seconds.
 # 3600 = 1 hour, 86400 = 1 day, 604800 = 1 week
@@ -45,5 +45,5 @@ SHOW_YT_DLP_OUTPUT: true # type: bool
 # If the request is not from one of these domains, it will be rejected.
 # If you want to allow all domains, remove the already present domains and add "*".
 ALLOWED_DOMAINS: # type: list[str]
-  - "https://ihateall.tech" # subdomains are allowed by default
+  - "https://smelf.duckdns.org" # subdomains are allowed by default
   - "https://ytflex.vercel.app"
