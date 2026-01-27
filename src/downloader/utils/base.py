@@ -10,7 +10,6 @@ from src.downloader.utils.create_response import (
 from src.downloader.utils.extract_metadata import extract_info
 from src.downloader.utils.filename_collector import FilenameCollectorPP
 from src.downloader.utils.ydl_opts_builder import ydl_opts_builder
-from src.downloader.utils.is_playlist import is_playlist
 from src.downloader.utils.parse_video_id import parse_video_id
 
 __all__ = [
@@ -20,6 +19,5 @@ __all__ = [
     "extract_info",
     "FilenameCollectorPP",
     "ydl_opts_builder",
-    "is_playlist",
     "parse_video_id",
 ]

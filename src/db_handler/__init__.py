@@ -12,9 +12,9 @@ __all__ = ["_engine", "_Base"]  # private namespace since it won't leave the pac
 
 _db_string = config.get(
     "database_url",
-    f"sqlite:///{Path(__file__).resolve().parent.parent.parent.as_posix()}"  # not stylish but os agnostic
+    f"sqlite:///{Path(__file__).resolve().parent.parent.parent.as_posix()}"
     + "/mountpoint/database/ytflex_database.db",
-)
+)  # unstylish but os agnostic
 # Create the database engine
 _engine = create_engine(_db_string)
 

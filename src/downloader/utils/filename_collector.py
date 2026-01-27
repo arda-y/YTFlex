@@ -21,5 +21,6 @@ class FilenameCollectorPP(PostProcessor):
         self.filenames = []
 
     def run(self, information):
+        """Collects the filename of the downloaded video."""
         self.filenames.append(information["filepath"])
         return [], information

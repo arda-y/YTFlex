@@ -15,9 +15,7 @@ def parse_video_id(link: str) -> str | bool:
         True if the URL is valid, False otherwise.
     """
 
-    if len(link) < 11:
-        return False
-    elif len(link) == 11:
+    if len(link) == 11:
         if (
             requests.head(
                 f"https://www.youtube.com/watch?v={link}", timeout=5
