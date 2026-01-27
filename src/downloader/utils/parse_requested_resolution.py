@@ -12,15 +12,18 @@ def parse_requested_resolution(requested_res: int | str):
     Also attempts to convert the passed resolution to an integer if it is a string.
 
     Args:
-        preferred_res: The preferred resolution to download. Accepts both int and str types, and "max"/"best" keywords.
+        preferred_res: The preferred resolution to download.
+        Accepts both int and str types, and "max"/"best" keywords.
     """
 
     max_res: int = config.get("MAX_RES")
 
     if isinstance(requested_res, str):
+
         if requested_res in ["max", "maximum", "best", "highest"]:
             return max_res
-        elif requested_res.isdigit():
+
+        if requested_res.isdigit():
             requested_res = int(requested_res)
         else:
             try:
@@ -34,7 +37,8 @@ def parse_requested_resolution(requested_res: int | str):
 
     if requested_res >= max_res:
         return max_res
-    elif requested_res < 0:
+
+    if requested_res < 0:
         return None
-    else:
-        return requested_res
+
+    return requested_res
