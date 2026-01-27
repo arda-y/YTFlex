@@ -26,7 +26,7 @@ async def audio_download(link: str):
 
 
 @app.get("/download/video")
-async def video_download(link: str, res: int, mp4: bool = False):
+async def video_download(link: str, res: str | int, mp4: bool = False):
     """API route for downloading video files."""
 
     raw_dl_info = download_files(

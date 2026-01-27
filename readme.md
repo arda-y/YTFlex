@@ -44,7 +44,7 @@ cd YTFlex
 
 | Setting | Description | Type |
 | --- | --- | --- |
-| `res_list` | A list of resolutions API can attempt to download. | `list[int]` |
+| `max_res` | Maximum resolution the API can attempt to download. | `int` |
 | `root_path` | Reverse proxied path to the API. | `str` |
 | `max_file_size` | The maximum file size in megabytes the API can download. | `int` |
 | `port` | The port the API server will listen on. | `int` |
@@ -135,9 +135,9 @@ If you get a JSON response with the following content, then you are good to go!
 * [x] Add support for Docker for easier deployment
 * [x] Add support for Nginx for reverse proxying and CDN
 * [x] Add CDN support
-* [x] Write a proper readme(ironic, isn't it?)
+* [x] Write a proper readme
 * [x] Add option to purge files after a certain amount of time
-* [x] Add option to download mp3 files(this is actually easier than video files ~~,but i haven't gotten around to it yet~~)
+* [x] Add option to download mp3 files
 * [x] Handle multiple file links more gracefully
 * [x] Add graceful error handling for invalid links
 * [x] Open source the project
@@ -148,9 +148,7 @@ If you get a JSON response with the following content, then you are good to go!
 * [ ] Add a frontend
 * [ ] Create a special message if:
   * [x] The file is not available for download, or if the link is invalid
-  * [ ] If the file is already downloaded and not expired
   * [ ] The file is too large
-  * [ ] The file is too long
   * [ ] The file is not available in the requested resolution
 * [ ] Add support to sqlite database for:
   * [ ] Logging downloads

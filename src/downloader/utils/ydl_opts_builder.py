@@ -4,13 +4,13 @@ Utility function to build the options for yt-dlp.
 
 import os
 import config
-from src.downloader.utils.find_appropriate_res import find_appropriate_res
+from src.downloader.utils.parse_requested_resolution import parse_requested_resolution
 
 
 def ydl_opts_builder(
     title: str,
     is_video_request: bool,
-    preferred_res: int = 720,
+    preferred_res: str = "720",
     convert_to_mp4: bool = False,
 ):
     """
@@ -34,7 +34,7 @@ def ydl_opts_builder(
 
     if is_video_request:
         # format string for yt-dlp
-        preferred_res = find_appropriate_res(preferred_res)
+        preferred_res = parse_requested_resolution(preferred_res)
 
         ydl_opts = {
             "format": f"bestvideo[height<={preferred_res}][filesize<{max_file_size}M]+"

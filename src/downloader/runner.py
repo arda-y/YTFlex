@@ -28,7 +28,7 @@ from src.downloader.utils.base import *
 def download_files(
     passed_url: str,
     is_video_request: bool,
-    preferred_res: int = 720,
+    preferred_res: str = "720",
     convert_to_mp4: bool = False,
 ):
     """

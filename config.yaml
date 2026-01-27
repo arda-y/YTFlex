@@ -9,17 +9,8 @@ ROOT_PATH: "/ytflex" # type: str
 # Sync with: docker-compose port argument, nginx reverse proxied port
 PORT: 2002 # type: int
 
-# The resolutions the API can attempt to download.
-# Comment out any resolution you don't want to be available.
-RES_LIST: # type: list[int]
-  - 2160
-  - 1440
-  - 1080
-  - 720
-  - 480
-  - 360
-  - 240
-  - 144
+# The highest resolution the API can attempt to download.
+MAX_RES: # type: int
 
 # Maximum file size in megabytes. If a resolution is not available due to this limitation,
 # it will download the next best resolution.
