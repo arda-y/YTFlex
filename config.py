@@ -4,7 +4,7 @@ Module for reading the config.yaml file.
 Use the get function to get the value of a setting.
 
 config.yaml file is read seperately every time the get function is called to allow
-hot swapping values without restarting the server.
+hot swapping values without restarting the server on modification.
 """
 
 import os

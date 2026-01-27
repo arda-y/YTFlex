@@ -1,9 +1,6 @@
 # YTFlex
 
-[![Docker Hub](https://img.shields.io/badge/Docker%20Hub%20Repository-%230db7ed.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/kirellkekw/ytflex)
-
 [![Pylint](https://github.com/kirellkekw/YTFlex/actions/workflows/pylint.yml/badge.svg)](https://github.com/pylint-dev/pylint)
-[![Build, Push and Deploy](https://github.com/kirellkekw/YTFlex/actions/workflows/deploy_to_server.yml/badge.svg)](https://github.com/kirellkekw/YTFlex/actions/workflows/deploy_to_server.yml)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Deployment ready, easy to use and fast YouTube downloader API written in Python with CDN and reverse proxy setup guide.
@@ -13,7 +10,6 @@ Deployment ready, easy to use and fast YouTube downloader API written in Python 
 [![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)](<https://www.nginx.com/>)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](<https://fastapi.tiangolo.com/>)
 [![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](<https://www.linux.org/>)
-[![Nix](https://img.shields.io/badge/NIX-5277C3.svg?style=for-the-badge&logo=NixOS&logoColor=white)](<https://nixos.org/>)
 
 # 1- Installing the requirements
 
