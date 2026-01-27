@@ -1,7 +1,5 @@
-# Configuration options for the API
-
 # Reverse proxied path to the API.
-# Required for Swagger UI to work properly.
+# Required for Swagger UI at /docs to work properly.
 # Sync with: nginx reverse proxied path
 ROOT_PATH: "/ytflex" # type: str
 

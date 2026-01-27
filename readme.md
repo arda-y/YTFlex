@@ -38,20 +38,20 @@ cd YTFlex
 
 ## 2.2- Edit the configuration file
 
-* Open the `config.yaml` file and change the settings according to your needs with your favorite text editor.
+* Open the `config.yaml` file and change the settings according to your needs with a text editor.
 
 * Here's a quick explanation of what each setting does:
 
-| Setting | Description | Type |
-| --- | --- | --- |
-| `max_res` | Maximum resolution the API can attempt to download. | `int` |
-| `root_path` | Reverse proxied path to the API. | `str` |
-| `max_file_size` | The maximum file size in megabytes the API can download. | `int` |
-| `port` | The port the API server will listen on. | `int` |
-| `ip_or_domain` | The address API will use to create a CDN link. If you pass this value in docker run command, config.yaml value will be ignored. | `str` |
-| `max_file_age` | Maximum age of a file in seconds before it gets deleted. | `int` |
-| `show_yt_dlp_output` | Decides if yt_dlp output is printed to the console or not. | `bool` |
-| `allowed_domains` | A list of allowed domains for CORS requests. | `list[str]` |
+| Setting              | Description                                              | Type        |
+| ---                  | ---                                                      | ---         |
+| `max_res`            | Maximum resolution the API can attempt to download.      | `int`       |
+| `max_file_size`      | The maximum file size in megabytes the API can download. | `int`       |
+| `root_path`          | Reverse proxied path to the API.                         | `str`       |
+| `port`               | The port the API server will listen on.                  | `int`       |
+| `ip_or_domain`       | The address API will use to create a CDN link.           | `str`       |
+| `max_file_age`       | Maximum age of a file in seconds before it gets deleted. | `int`       |
+| `show_yt_dlp_output` | Suppresses yt-dlp download output if set to False.       | `bool`      |
+| `allowed_domains`    | A list of allowed domains for CORS requests.             | `list[str]` |
 
 ## 2.3- Edit the docker-compose file
 
