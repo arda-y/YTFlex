@@ -26,7 +26,7 @@ from src.downloader.utils.base import *
 
 
 def download_files(
-    passed_urls: list[str] | str,
+    passed_url: str,
     is_video_request: bool,
     preferred_res: int = 720,
     convert_to_mp4: bool = False,
@@ -50,74 +50,31 @@ def download_files(
         Will have no effect if downloading audio only.
     """
 
-    # url's will be collected here
-    parsed_links_list = []
+    # check if url is valid
+    link = parse_video_id(passed_url)
 
-    if isinstance(passed_urls, str):
-        # check if url is valid
-        if not is_valid_url(passed_urls):
-            return create_error_response("Invalid URL")
-
-        # check if url is playlist
-        if is_playlist(passed_urls):
-            return create_error_response(
-                "Can't download playlists. Please try again with a single video."
-            )
-            # this will be re-enabled once i figure out the rest of the code.
-            # parsed_links_list = parse_playlist(passed_urls)
-
-        # if not a playlist then it's a single video
-        parsed_links_list.append(extract_info(passed_urls))
-
-    elif isinstance(passed_urls, list):
-        for video in passed_urls:
-            # can't have multiple playlists
-            if is_playlist(video):
-                return create_error_response(
-                    "Can't download multiple playlists. "
-                    + "Please try again with a single playlist."
-                )
-            # check url's are valid
-            if not is_valid_url(video):
-                # remove invalid url's from list
-                passed_urls.remove(video)
-
-        # now we can parse the list
-        for video in passed_urls:
-            parsed_links_list += extract_info(video)
-
-    # if no urls are valid
-    if parsed_links_list == []:
+    if not link:
         return create_error_response(
-            "Invalid URL(s) passed. " + "Please check your URL(s) and try again."
+            "Invalid URL passed. Please check your URL and try again."
         )
 
-    # create a list of download info per url
     download_info = []
-    for video in parsed_links_list:
-        if video is None:
-            download_info.append([])
-            continue
+    video = extract_info(link)
 
-        # this function will create the required options for yt-dlp
-        # regardless of whether the request is for a video or audio file
-        # by checking if the request is for a video or audio file internally
-        ydl_opts = ydl_opts_builder(
-            video.title, is_video_request, preferred_res, convert_to_mp4
-        )
+    ydl_opts = ydl_opts_builder(
+        video.title, is_video_request, preferred_res, convert_to_mp4
+    )
 
-        # create a download object
-        filename_collector = FilenameCollectorPP()
-        ydl = YoutubeDL(ydl_opts)
-        ydl.add_post_processor(filename_collector)
-        ydl.download([video.url])
-        last_downloaded_dir: str = filename_collector.filenames[-1]
-        filename: str = os.path.basename(last_downloaded_dir)
-        filedir: str = os.path.dirname(last_downloaded_dir)
-
-        cdn_link: str = create_download_link(filedir, filename)
-        download_info.append(
-            create_response(cdn_link, video.thumbnail, filename, video.duration, False)
-        )
-
+    # create a download object
+    filename_collector = FilenameCollectorPP()
+    ydl = YoutubeDL(ydl_opts)
+    ydl.add_post_processor(filename_collector)
+    ydl.download([video.url])
+    last_downloaded_dir: str = filename_collector.filenames[-1]
+    filename: str = os.path.basename(last_downloaded_dir)
+    filedir: str = os.path.dirname(last_downloaded_dir)
+    cdn_link: str = create_download_link(filedir, filename)
+    download_info.append(
+        create_response(cdn_link, video.thumbnail, filename, video.duration, False)
+    )
     return download_info

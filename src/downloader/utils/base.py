@@ -11,7 +11,7 @@ from src.downloader.utils.extract_metadata import extract_info
 from src.downloader.utils.filename_collector import FilenameCollectorPP
 from src.downloader.utils.ydl_opts_builder import ydl_opts_builder
 from src.downloader.utils.is_playlist import is_playlist
-from src.downloader.utils.is_valid_url import is_valid_url
+from src.downloader.utils.parse_video_id import parse_video_id
 
 __all__ = [
     "create_download_link",
@@ -21,5 +21,5 @@ __all__ = [
     "FilenameCollectorPP",
     "ydl_opts_builder",
     "is_playlist",
-    "is_valid_url",
+    "parse_video_id",
 ]

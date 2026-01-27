@@ -20,7 +20,7 @@ async def audio_download(link: str):
     """API route for downloading audio files."""
 
     # bundle the download info
-    raw_dl_info = download_files(passed_urls=link, is_video_request=False)
+    raw_dl_info = download_files(passed_url=link, is_video_request=False)
 
     return raw_dl_info
 
@@ -30,7 +30,7 @@ async def video_download(link: str, res: int, mp4: bool = False):
     """API route for downloading video files."""
 
     raw_dl_info = download_files(
-        passed_urls=link, is_video_request=True, preferred_res=res, convert_to_mp4=mp4
+        passed_url=link, is_video_request=True, preferred_res=res, convert_to_mp4=mp4
     )
 
     return raw_dl_info
