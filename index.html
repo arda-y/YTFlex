@@ -147,7 +147,7 @@
 
                     // Added File Size to the metadata string
                     const size = info.metadata.filesize || 'Unknown size';
-                    document.getElementById('videoMeta').innerText = `${info.metadata.duration}s • ${info.metadata.extension} • ${size}`;
+                    document.getElementById('videoMeta').innerText = `${info.metadata.duration} • ${info.metadata.extension} • ${size}`;
 
                     const dlLink = document.getElementById('finalDlLink');
                     dlLink.href = info.link;
