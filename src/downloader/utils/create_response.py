@@ -2,6 +2,7 @@
 Utility function to create a response object for the client.
 """
 
+import math
 import os
 
 
@@ -10,7 +11,7 @@ def create_response(
     thumbnail: str,
     filename: str,
     duration: int,
-    already_downloaded: bool,
+    filesize: int,
 ):
     """
     Creates and returns a response object for the client.
@@ -22,23 +23,30 @@ def create_response(
         thumbnail: the thumbnail of the file
         duration: the duration of the file
         filename: the filename of the file
-        already_downloaded: whether the file was already downloaded or not
     """
 
-    if already_downloaded:
-        message = "File is already downloaded"
-    else:
-        message = "File has been downloaded successfully"
+    def convert_size(size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return f"{s} {size_name[i]}"
+    
+    readable_filesize = convert_size(filesize)
+
+    readable_duration = f"{duration // 3600}h {(duration % 3600) // 60}m {duration % 60}s"
 
     response = [
         {
             "link": cdn_link,
-            "message": message,
+            "message": f"File downloaded successfully",
             "metadata": {
                 "title": filename.split(".")[0],
-                "duration": duration,
+                "duration": readable_duration,
                 "thumbnail": thumbnail,
-                "already_downloaded": already_downloaded,
+                "filesize": readable_filesize,
                 "filename": filename,
                 "extension": os.path.splitext(filename)[1],
             },

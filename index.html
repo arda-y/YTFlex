@@ -20,8 +20,6 @@
     </style>
 </head>
 
-
-
 <body class="min-h-screen flex items-center justify-center p-4">
     <div class="max-w-xl w-full space-y-6">
         <div class="text-center space-y-2">
@@ -65,27 +63,31 @@
                     </div>
                 </div>
 
-                <button onclick="handleDownload()" id="dlBtn"
+                <button onclick="handleFetch()" id="dlBtn"
                     class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <i data-lucide="download"></i> Fetch Download
+                    <i data-lucide="search"></i> Fetch Download
                 </button>
             </div>
         </div>
 
         <div id="resultCard"
-            class="hidden glass border border-indigo-500/30 p-4 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="flex gap-4">
-                <img id="thumb" src="" alt="Thumbnail" class="w-32 h-20 object-cover rounded-lg bg-slate-800">
-                <div class="flex-1 min-w-0">
-                    <h3 id="videoTitle" class="font-bold truncate">Title</h3>
-                    <p id="videoMeta" class="text-sm text-slate-400">0:00 • .webm</p>
-                    <a id="finalDlLink" href="#"
-                        class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-400 hover:text-indigo-300 font-medium">
-                        Click here if download doesn't start <i data-lucide="external-link" class="w-3 h-3"></i>
+            class="hidden glass border border-indigo-500/30 p-5 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div class="flex flex-col sm:flex-row gap-4">
+                <img id="thumb" src="" alt="Thumbnail" class="w-full sm:w-32 h-20 object-cover rounded-lg bg-slate-800">
+                <div class="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                        <h3 id="videoTitle" class="font-bold truncate text-lg">Title</h3>
+                        <p id="videoMeta" class="text-sm text-slate-400">0:00 • .webm • 0 MB</p>
+                    </div>
+
+                    <a id="finalDlLink" href="#" target="_blank"
+                        class="mt-3 w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download File
                     </a>
                 </div>
             </div>
         </div>
+
         <div class="flex justify-end mb-2">
             <div id="apiStatus"
                 class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
@@ -104,14 +106,13 @@
         const resContainer = document.getElementById('resContainer');
         const formatContainer = document.getElementById('formatContainer');
 
-        // Toggle visibility of video-specific options
         typeSelect.addEventListener('change', (e) => {
             const isVideo = e.target.value === 'video';
             resContainer.classList.toggle('hidden', !isVideo);
             formatContainer.classList.toggle('hidden', !isVideo);
         });
 
-        async function handleDownload() {
+        async function handleFetch() {
             const btn = document.getElementById('dlBtn');
             const status = document.getElementById('statusMsg');
             const resultCard = document.getElementById('resultCard');
@@ -119,9 +120,8 @@
 
             if (!link) return alert("Please paste a link first!");
 
-            // UI Feedback
             btn.disabled = true;
-            btn.innerHTML = `<span class="animate-spin mr-2">◌</span> Processing...`;
+            btn.innerHTML = `<span class="animate-spin mr-2">◌</span> Searching...`;
             status.innerText = "Talking to server, this might take a moment...";
             resultCard.classList.add('hidden');
 
@@ -129,7 +129,6 @@
             const res = document.getElementById('resSelect').value;
             const mp4 = document.getElementById('mp4Check').checked;
 
-            // Construct URL
             const baseUrl = `https://smelf.duckdns.org/ytflex/download/${type}`;
             const params = new URLSearchParams({ link });
             if (type === 'video') {
@@ -140,36 +139,38 @@
             try {
                 const response = await fetch(`${baseUrl}?${params.toString()}`);
                 const data = await response.json();
-
-                // Navigate that nested array structure: data[0][0]
                 const info = data[0][0];
 
                 if (info && info.link) {
-                    // Update UI
                     document.getElementById('thumb').src = info.metadata.thumbnail;
                     document.getElementById('videoTitle').innerText = info.metadata.title;
-                    document.getElementById('videoMeta').innerText = `${info.metadata.duration}s • ${info.metadata.extension}`;
-                    document.getElementById('finalDlLink').href = info.link;
+
+                    // Added File Size to the metadata string
+                    const size = info.metadata.filesize || 'Unknown size';
+                    document.getElementById('videoMeta').innerText = `${info.metadata.duration}s • ${info.metadata.extension} • ${size}`;
+
+                    const dlLink = document.getElementById('finalDlLink');
+                    dlLink.href = info.link;
+                    // Set download attribute to suggest filename
+                    dlLink.setAttribute('download', `${info.metadata.title}.${info.metadata.extension}`);
 
                     resultCard.classList.remove('hidden');
-                    status.innerText = info.message;
-
-                    // Trigger Auto-Download
-                    window.location.href = info.link;
+                    status.innerText = "Ready to download!";
                 }
             } catch (err) {
                 status.innerText = "Error: Could not reach the server.";
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="download"></i> Fetch Download`;
+                btn.innerHTML = `<i data-lucide="search"></i> Fetch Download`;
                 lucide.createIcons();
             }
         }
+
         window.addEventListener('DOMContentLoaded', async () => {
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
-            const baseUrl = "https://smelf.duckdns.org/ytflex"; // Your ROOT_PATH
+            const baseUrl = "https://smelf.duckdns.org/ytflex";
 
             try {
                 const response = await fetch(`${baseUrl}/root`);

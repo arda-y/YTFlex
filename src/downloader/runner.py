@@ -73,10 +73,11 @@ def download_files(
     ydl.add_post_processor(filename_collector)
     ydl.download([video.url])
     last_downloaded_dir: str = filename_collector.filenames[-1]
+    file_size = os.path.getsize(last_downloaded_dir)
     filename: str = os.path.basename(last_downloaded_dir)
     filedir: str = os.path.dirname(last_downloaded_dir)
     cdn_link: str = create_download_link(filedir, filename)
     download_info.append(
-        create_response(cdn_link, video.thumbnail, filename, video.duration, False)
+        create_response(cdn_link, video.thumbnail, filename, video.duration, file_size)
     )
     return download_info
