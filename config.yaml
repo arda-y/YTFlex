@@ -8,7 +8,7 @@ ROOT_PATH: "/ytflex" # type: str
 PORT: 2002 # type: int
 
 # The highest resolution the API can attempt to download.
-MAX_RES: # type: int
+MAX_RES: 2160 # type: int
 
 # Maximum file size in megabytes. If a resolution is not available due to this limitation,
 # it will download the next best resolution.
@@ -28,11 +28,12 @@ MAX_FILE_AGE: 3600 # type: int
 
 # Sets if download jobs should be silent or not.
 # If set to false, the output from yt-dlp will not be shown.
-SHOW_YT_DLP_OUTPUT: true # type: bool
+SHOW_YT_DLP_OUTPUT: false # type: bool
 
 # Sets the allowed domains for CORS requests.
 # If the request is not from one of these domains, it will be rejected.
 # If you want to allow all domains, remove the already present domains and add "*".
 ALLOWED_DOMAINS: # type: list[str]
+  - "*" # allows all domains, but is not recommended for production
   - "https://smelf.duckdns.org" # subdomains are allowed by default
   - "https://ytflex.vercel.app"

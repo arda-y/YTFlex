@@ -4,232 +4,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Downloader</title>
+    <title>YTFlex Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .input-container {
-            width: 600px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-
-        .resolution-buttons {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .resolution-buttons button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-
-        .resolution-buttons button.selected,
-        .toggle-buttons button.selected,
-        .codec-buttons button.selected {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .toggle-buttons {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .toggle-buttons button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-
-        /* Codec choosing buttons */
-        .codec-buttons {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .codec-buttons button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-
-        .download-button {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .download-button button {
-            padding: 10px 20px;
-            font-size: 14px;
-            border: 1px solid #007bff;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-        }
-
-        .dl_link {
-            margin-top: 20px;
-            padding: 10px;
-            font-size: 16px;
-            border: 0px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            word-break: break-all;
-        }
-
-        /* Hide resolution buttons when not needed */
-        .audio-mode .resolution-buttons {
-            display: none;
-        }
-
-        /* Hide codec buttons when not needed */
-        .audio-mode .codec-buttons {
-            display: none;
+            background: #0f172a;
+            color: #f8fafc;
         }
     </style>
 </head>
 
-<body>
-    <div class="input-container">
-        <input type="text" id="video-url" placeholder="Enter video URL...">
-        <div class="toggle-buttons">
-            <button onclick="selectDownloadType('video')" id="video-button">Video</button>
-            <button onclick="selectDownloadType('audio')" id="audio-button">Audio</button>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-xl w-full space-y-6">
+        <div class="text-center space-y-2">
+            <h1 class="text-4xl font-bold tracking-tight text-indigo-400">YTFlex</h1>
+            <p class="text-slate-400">Enter a YouTube URL to get started</p>
         </div>
-        <div class="resolution-buttons" id="resolution-buttons">
-            <button onclick="setResolution(144)" id="btn-144">144p</button>
-            <button onclick="setResolution(240)" id="btn-240">240p</button>
-            <button onclick="setResolution(360)" id="btn-360">360p</button>
-            <button onclick="setResolution(480)" id="btn-480">480p</button>
-            <button onclick="setResolution(720)" id="btn-720">720p</button>
-            <button onclick="setResolution(1080)" id="btn-1080">1080p</button>
+
+        <div class="glass border border-slate-700 p-6 rounded-2xl shadow-2xl">
+            <div class="space-y-4">
+                <div>
+                    <input type="text" id="urlInput" placeholder="https://www.youtube.com/watch?v=..."
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                </div>
+
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex-1 min-w-[120px]">
+                        <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Type</label>
+                        <select id="typeSelect"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            <option value="video">Video</option>
+                            <option value="audio">Audio Only</option>
+                        </select>
+                    </div>
+                    <div id="resContainer" class="flex-1 min-w-[120px]">
+                        <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Resolution</label>
+                        <select id="resSelect"
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            <option value="2160">2160p (4K)</option>
+                            <option value="1440">1440p</option>
+                            <option value="1080" selected>1080p</option>
+                            <option value="720">720p</option>
+                            <option value="480">480p</option>
+                            <option value="360">360p</option>
+                        </select>
+                    </div>
+                    <div id="formatContainer" class="flex items-end pb-2">
+                        <label class="flex items-center cursor-pointer gap-2">
+                            <input type="checkbox" id="mp4Check" class="w-4 h-4 accent-indigo-500">
+                            <span class="text-sm text-slate-300">Force MP4</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="handleDownload()" id="dlBtn"
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="download"></i> Fetch Download
+                </button>
+            </div>
         </div>
-        <div class="codec-buttons" id="codec-buttons">
-            <button onclick="setCodec()" id="btn-mp4" type="checkbox">MP4</button>
+
+        <div id="resultCard"
+            class="hidden glass border border-indigo-500/30 p-4 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div class="flex gap-4">
+                <img id="thumb" src="" alt="Thumbnail" class="w-32 h-20 object-cover rounded-lg bg-slate-800">
+                <div class="flex-1 min-w-0">
+                    <h3 id="videoTitle" class="font-bold truncate">Title</h3>
+                    <p id="videoMeta" class="text-sm text-slate-400">0:00 • .webm</p>
+                    <a id="finalDlLink" href="#"
+                        class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-400 hover:text-indigo-300 font-medium">
+                        Click here if download doesn't start <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="download-button">
-            <button onclick="constructUrl()">Get Download URL</button>
-            <div id="download-link"></div>
-        </div>
-        <div class="dl_link" id="download-url"></div>
+
+        <p id="statusMsg" class="text-center text-sm text-slate-500"></p>
     </div>
 
     <script>
-        var selectedType = 'video'; // Default selected type
-        var selectedCodec = false; // Default selected codec
+        lucide.createIcons();
 
-        function setResolution(resolution) {
-            // Store selected resolution in a global variable
-            window.selectedResolution = resolution;
+        const typeSelect = document.getElementById('typeSelect');
+        const resContainer = document.getElementById('resContainer');
+        const formatContainer = document.getElementById('formatContainer');
 
-            // Remove 'selected' class from all buttons
-            var buttons = document.querySelectorAll('.resolution-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('selected');
-            });
+        // Toggle visibility of video-specific options
+        typeSelect.addEventListener('change', (e) => {
+            const isVideo = e.target.value === 'video';
+            resContainer.classList.toggle('hidden', !isVideo);
+            formatContainer.classList.toggle('hidden', !isVideo);
+        });
 
-            // Add 'selected' class to the clicked button
-            var buttonId = "btn-" + resolution;
-            var selectedButton = document.getElementById(buttonId);
-            selectedButton.classList.add('selected');
-        }
+        async function handleDownload() {
+            const btn = document.getElementById('dlBtn');
+            const status = document.getElementById('statusMsg');
+            const resultCard = document.getElementById('resultCard');
+            const link = document.getElementById('urlInput').value;
 
-        function setCodec() {
-            // Store selected codec in a global variable
-            window.selectedCodec = window.selectedCodec === true ? false : true;
+            if (!link) return alert("Please paste a link first!");
 
-            var selectedButton = document.getElementById("btn-mp4");
+            // UI Feedback
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-spin mr-2">◌</span> Processing...`;
+            status.innerText = "Talking to server, this might take a moment...";
+            resultCard.classList.add('hidden');
 
-            if (window.selectedCodec === true) {
-                selectedButton.classList.add('selected');
-            } else {
-                selectedButton.classList.remove('selected');
+            const type = typeSelect.value;
+            const res = document.getElementById('resSelect').value;
+            const mp4 = document.getElementById('mp4Check').checked;
+
+            // Construct URL
+            const baseUrl = `https://smelf.duckdns.org/ytflex/download/${type}`;
+            const params = new URLSearchParams({ link });
+            if (type === 'video') {
+                params.append('res', res);
+                params.append('mp4', mp4);
             }
-        }
 
-        function selectDownloadType(type) {
-            window.selectedType = type; // Update selected type
+            try {
+                const response = await fetch(`${baseUrl}?${params.toString()}`);
+                const data = await response.json();
 
-            // Remove 'selected' class from all buttons
-            var buttons = document.querySelectorAll('.toggle-buttons button');
-            buttons.forEach(button => {
-                button.classList.remove('selected');
-            });
+                // Navigate that nested array structure: data[0][0]
+                const info = data[0][0];
 
-            // Add 'selected' class to the clicked button
-            var buttonId = type + "-button";
-            var selectedButton = document.getElementById(buttonId);
-            selectedButton.classList.add('selected');
+                if (info && info.link) {
+                    // Update UI
+                    document.getElementById('thumb').src = info.metadata.thumbnail;
+                    document.getElementById('videoTitle').innerText = info.metadata.title;
+                    document.getElementById('videoMeta').innerText = `${info.metadata.duration}s • ${info.metadata.extension}`;
+                    document.getElementById('finalDlLink').href = info.link;
 
-            // Toggle class for audio mode
-            var inputContainer = document.querySelector('.input-container');
-            if (type === 'audio') {
-                inputContainer.classList.add('audio-mode');
-            } else {
-                inputContainer.classList.remove('audio-mode');
+                    resultCard.classList.remove('hidden');
+                    status.innerText = info.message;
+
+                    // Trigger Auto-Download
+                    window.location.href = info.link;
+                }
+            } catch (err) {
+                status.innerText = "Error: Could not reach the server.";
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i data-lucide="download"></i> Fetch Download`;
+                lucide.createIcons();
             }
-        }
-
-        function extractVideoId(url) {
-            if (url.length === 11) {
-                return url;
-            }
-            const pattern = /^(?:(?:https?:)?\/\/)?(?:(?:(?:www|m(?:usic)?)\.)?youtu(?:\.be|be\.com)\/(?:shorts\/|live\/|v\/|e(?:mbed)?\/|watch(?:\/|\?(?:\S+=\S+&)*v=)|oembed\?url=https?%3A\/\/(?:www|m(?:usic)?)\.youtube\.com\/watch\?(?:\S+=\S+&)*v%3D|attribution_link\?(?:\S+=\S+&)*u=(?:\/|%2F)watch(?:\?|%3F)v(?:=|%3D))?|www\.youtube-nocookie\.com\/embed\/)([\w-]{11})[\?&#]?\S*$/;
-            const match = url.match(pattern);
-            if (match) {
-                return match[1];
-            } else {
-                return null;
-            }
-        }
-
-        function constructUrl() {
-            var rawUrl = document.getElementById("video-url").value;
-            // parse the youtube link to get ID only
-            var videoId = extractVideoId(rawUrl);
-
-            var resolution = window.selectedResolution || 720; // Default to 720p if resolution is not selected
-            var codec = window.selectedCodec || ""; // Get selected codec
-            var downloadUrl = "https://ihateall.tech/ytflex/download/" + (selectedType === 'audio' ? 'audio' : 'video') + "?link=" + encodeURIComponent(videoId) + (selectedType === 'video' ? ("&res=" + resolution) : "") + (codec ? ("&mp4=" + codec) : "");
-
-            // Convert the URL into a clickable hyperlink
-            var downloadLink = '<a href="' + downloadUrl + '" target="_blank">' + downloadUrl + '</a>';
-
-            // Display the constructed URL as a clickable hyperlink
-            document.getElementById("download-url").innerHTML = downloadLink;
-
         }
     </script>
 </body>

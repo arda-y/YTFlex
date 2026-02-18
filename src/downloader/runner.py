@@ -28,7 +28,7 @@ from src.downloader.utils.base import *
 def download_files(
     passed_url: str,
     is_video_request: bool,
-    preferred_res: str = "720",
+    preferred_res: str = "1080",
     convert_to_mp4: bool = False,
 ):
     """
@@ -43,7 +43,7 @@ def download_files(
 
         is_video_request: Whether the request is for a video or audio file.
 
-        preferred_res: The preferred resolution to download. Defaults to 720p.
+        preferred_res: The preferred resolution to download. Defaults to 1080p.
         If not available, audio will be downloaded instead.
 
         convert_to_mp4: Whether to convert the downloaded file to mp4 or not. Defaults to False.
@@ -51,7 +51,9 @@ def download_files(
     """
 
     # check if url is valid
+    print(f"Checking URL: {passed_url}")
     link = parse_video_id(passed_url)
+    print(f"Parsed link: {link}")
 
     if not link:
         return create_error_response(
