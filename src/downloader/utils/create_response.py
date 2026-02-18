@@ -38,6 +38,13 @@ def create_response(
 
     readable_duration = f"{duration // 3600}h {(duration % 3600) // 60}m {duration % 60}s"
 
+    if readable_duration.startswith("0h "):
+        readable_duration = readable_duration[3:]
+    if readable_duration.startswith("0m "):
+        readable_duration = readable_duration[3:]
+    if readable_duration.startswith("0s"):
+        readable_duration = readable_duration[3:]
+
     response = [
         {
             "link": cdn_link,
