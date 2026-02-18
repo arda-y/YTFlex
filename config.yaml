@@ -15,7 +15,7 @@ MAX_RES: 2160 # type: int
 # This only limits the filesize of the video, not the audio.
 # If a video is 197mb and audio is 5mb, the video will be 202mb and will be downloaded anyway.
 # Max audio file size is the same when downloading audio only.
-MAX_FILE_SIZE: 200 # type: int
+MAX_FILE_SIZE: 2000 # type: int
 
 # The IP or domain to use when generating the download link.
 # Has no effect on nginx or docker command, but is used in the API message returned.
@@ -34,6 +34,6 @@ SHOW_YT_DLP_OUTPUT: false # type: bool
 # If the request is not from one of these domains, it will be rejected.
 # If you want to allow all domains, remove the already present domains and add "*".
 ALLOWED_DOMAINS: # type: list[str]
-  - "*" # allows all domains, but is not recommended for production
+#  - "*" # allows all domains, but is not recommended for production
   - "https://smelf.duckdns.org" # subdomains are allowed by default
   - "https://ytflex.vercel.app"
