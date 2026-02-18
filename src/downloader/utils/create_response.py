@@ -33,10 +33,12 @@ def create_response(
         p = math.pow(1024, i)
         s = round(size_bytes / p, 2)
         return f"{s} {size_name[i]}"
-    
+
     readable_filesize = convert_size(filesize)
 
-    readable_duration = f"{duration // 3600}h {(duration % 3600) // 60}m {duration % 60}s"
+    readable_duration = (
+        f"{duration // 3600}h {(duration % 3600) // 60}m {duration % 60}s"
+    )
 
     if readable_duration.startswith("0h "):
         readable_duration = readable_duration[3:]
@@ -48,7 +50,7 @@ def create_response(
     response = [
         {
             "link": cdn_link,
-            "message": f"File downloaded successfully",
+            "message": "File downloaded successfully",
             "metadata": {
                 "title": filename.split(".")[0],
                 "duration": readable_duration,
