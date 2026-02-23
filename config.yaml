@@ -20,7 +20,7 @@ MAX_FILE_SIZE: 2000 # type: int
 # The IP or domain to use when generating the download link.
 # Has no effect on nginx or docker command, but is used in the API message returned.
 # Passing environment variable from docker run command will override this.
-IP_OR_DOMAIN: "https://smelf.duckdns.org" # type: str
+IP_OR_DOMAIN: "https://arda0.net" # type: str
 
 # Max file age in seconds.
 # 3600 = 1 hour, 86400 = 1 day, 604800 = 1 week
@@ -35,5 +35,5 @@ SHOW_YT_DLP_OUTPUT: false # type: bool
 # If you want to allow all domains, remove the already present domains and add "*".
 ALLOWED_DOMAINS: # type: list[str]
 #  - "*" # allows all domains, but is not recommended for production
-  - "https://smelf.duckdns.org" # subdomains are allowed by default
   - "https://ytflex.vercel.app"
+  - "https://arda0.net"

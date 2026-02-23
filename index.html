@@ -102,6 +102,8 @@
     <script>
         lucide.createIcons();
 
+        const apiUrl = "https://arda0.net/ytflex";
+
         const typeSelect = document.getElementById('typeSelect');
         const resContainer = document.getElementById('resContainer');
         const formatContainer = document.getElementById('formatContainer');
@@ -129,7 +131,7 @@
             const res = document.getElementById('resSelect').value;
             const mp4 = document.getElementById('mp4Check').checked;
 
-            const baseUrl = `https://smelf.duckdns.org/ytflex/download/${type}`;
+            const baseUrl = `${apiUrl}/download/${type}`;
             const params = new URLSearchParams({ link });
             if (type === 'video') {
                 params.append('res', res);
@@ -170,10 +172,9 @@
         window.addEventListener('DOMContentLoaded', async () => {
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
-            const baseUrl = "https://smelf.duckdns.org/ytflex";
 
             try {
-                const response = await fetch(`${baseUrl}/root`);
+                const response = await fetch(`${apiUrl}/root`);
                 if (response.ok) {
                     dot.classList.replace('bg-yellow-500', 'bg-green-500');
                     dot.classList.remove('animate-pulse');
