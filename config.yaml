@@ -3,6 +3,8 @@
 # Sync with: nginx reverse proxied path
 ROOT_PATH: "/ytflex" # type: str
 
+CDN_LOCATION: "ytflex-cdn" # type: str
+
 # The port to run the API server on.
 # Sync with: docker-compose port argument, nginx reverse proxied port
 PORT: 2002 # type: int

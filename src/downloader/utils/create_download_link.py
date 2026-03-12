@@ -17,6 +17,7 @@ def create_download_link(filedir: str, filename: str) -> str:
     """
 
     ip_or_domain = os.getenv("ip_or_domain", config.get("IP_OR_DOMAIN"))
+    cdn_location = os.getenv("cdn_location", config.get("CDN_LOCATION"))
 
     random_string = "".join(
         random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=12)
@@ -29,4 +30,4 @@ def create_download_link(filedir: str, filename: str) -> str:
         os.path.join(filedir, filename), os.path.join(filedir, random_string, filename)
     )  # move file into the random folder we just created
 
-    return f"{ip_or_domain}/ytflex-cdn/{quote(random_string)}/{quote(filename)}"
+    return f"{ip_or_domain}/{quote(cdn_location)}/{quote(random_string)}/{quote(filename)}"

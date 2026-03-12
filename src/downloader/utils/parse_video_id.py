@@ -30,6 +30,8 @@ def parse_video_id(link: str) -> str | bool:
             video_id = link.split("youtube.com/watch?v=")[1].split("&")[0]
         elif "youtu.be/" in link:
             video_id = link.split("youtu.be/")[1].split("?")[0]
+        elif "youtube.com/shorts/" in link:
+            video_id = link.split("youtube.com/shorts/")[1].split("?")[0]
         else:
             return False  # other formats are not supported for now
 
@@ -43,3 +45,7 @@ def parse_video_id(link: str) -> str | bool:
                 return video_id
 
     return False  # catch all failure case
+
+if __name__ == "__main__":
+    print(parse_video_id("https://www.youtube.com/shorts/Vpeo4xrn1hM"))
+    assert parse_video_id("https://www.youtube.com/shorts/Vpeo4xrn1hM") == "Vpeo4xrn1hM"
