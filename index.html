@@ -20,111 +20,131 @@
     </style>
 </head>
 
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-xl w-full space-y-6">
-        <div class="text-center space-y-2">
-            <h1 class="text-4xl font-bold tracking-tight text-indigo-400">YTFlex</h1>
-            <p class="text-slate-400">Enter a YouTube URL to get started</p>
-        </div>
+<body class="text-slate-200 min-h-screen flex items-center justify-center p-4">
 
-        <div class="glass border border-slate-700 p-6 rounded-2xl shadow-2xl">
+    <div class="max-w-lg w-full space-y-4">
+        <div class="glass-panel p-8 rounded-2xl shadow-2xl bg-slate-900/50 backdrop-blur-md border border-slate-700">
+            <header class="mb-8 text-center">
+                <h1 class="text-3xl font-extrabold text-indigo-400 tracking-tight mb-2">YTFlex</h1>
+                <div class="h-1 w-12 bg-indigo-500 mx-auto rounded-full"></div>
+                <p class="text-slate-400 mt-4 text-sm font-mono italic">premium youtube scraping solution.</p>
+            </header>
+
             <div class="space-y-4">
-                <div>
-                    <input type="text" id="urlInput" placeholder="https://www.youtube.com/watch?v=..."
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                <div class="relative">
+                    <input type="text" id="urlInput" placeholder="Paste YouTube URL here..."
+                        class="w-full bg-black/40 border border-slate-700 rounded-xl px-4 py-4 text-sm text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                 </div>
 
-                <div class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[120px]">
-                        <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Type</label>
+                <div class="flex gap-3">
+                    <div class="flex-1">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Type</label>
                         <select id="typeSelect"
-                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
                             <option value="video">Video</option>
-                            <option value="audio">Audio Only</option>
+                            <option value="audio">Audio</option>
                         </select>
                     </div>
-                    <div id="resContainer" class="flex-1 min-w-[120px]">
-                        <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Resolution</label>
+                    <div id="resContainer" class="flex-1">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Quality</label>
                         <select id="resSelect"
-                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
-                            <option value="2160">2160p (4K)</option>
+                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
+                            <option value="2160">4K</option>
                             <option value="1440">1440p</option>
                             <option value="1080" selected>1080p</option>
                             <option value="720">720p</option>
                             <option value="480">480p</option>
-                            <option value="360">360p</option>
                         </select>
                     </div>
-                    <div id="formatContainer" class="flex items-end pb-2">
-                        <label class="flex items-center cursor-pointer gap-2">
-                            <input type="checkbox" id="mp4Check" class="w-4 h-4 accent-indigo-500">
-                            <span class="text-sm text-slate-300">Force MP4</span>
-                        </label>
-                    </div>
+                </div>
+
+                <div id="formatContainer" class="flex items-center gap-2 px-1">
+                    <input type="checkbox" id="mp4Check" class="w-4 h-4 rounded accent-indigo-500">
+                    <label for="mp4Check" class="text-xs text-slate-400 cursor-pointer">Force MP4 Compatibility</label>
                 </div>
 
                 <button onclick="handleFetch()" id="dlBtn"
-                    class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <i data-lucide="search"></i> Fetch Download
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 font-bold py-4 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="zap" class="w-4 h-4"></i> FETCH DOWNLOAD
                 </button>
             </div>
-        </div>
 
-        <div id="resultCard"
-            class="hidden glass border border-indigo-500/30 p-5 rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <img id="thumb" src="" alt="Thumbnail" class="w-full sm:w-32 h-20 object-cover rounded-lg bg-slate-800">
-                <div class="flex-1 min-w-0 flex flex-col justify-between">
-                    <div>
-                        <h3 id="videoTitle" class="font-bold truncate text-lg">Title</h3>
-                        <p id="videoMeta" class="text-sm text-slate-400">0:00 • .webm • 0 MB</p>
+            <div id="resultCard" class="mt-8 pt-8 border-t border-slate-700/50 hidden">
+                <div class="flex gap-4 mb-4">
+                    <img id="thumb" src="" class="w-24 h-16 object-cover rounded-lg bg-slate-800 ring-1 ring-white/10">
+                    <div class="flex-1 min-w-0">
+                        <h3 id="videoTitle" class="font-bold truncate text-sm text-white">Video Title</h3>
+                        <p id="videoMeta" class="text-[10px] text-slate-500 font-mono mt-1">0:00 • mp4 • 0MB</p>
                     </div>
-
-                    <a id="finalDlLink" href="#" target="_blank"
-                        class="mt-3 w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="download" class="w-4 h-4"></i> Download File
-                    </a>
                 </div>
+
+                <div class="relative group mb-3">
+                    <input type="text" id="finalUrlDisplay" readonly
+                        class="w-full bg-black/40 border border-slate-700 rounded-lg pl-3 pr-20 py-2.5 text-xs text-indigo-300 font-mono focus:outline-none">
+                    <button onclick="copyToClipboard(document.getElementById('finalUrlDisplay').value, this)"
+                        class="absolute right-1.5 top-1.5 bottom-1.5 bg-slate-700 hover:bg-slate-600 text-white px-3 rounded text-[10px] font-bold transition-all">
+                        COPY
+                    </button>
+                </div>
+
+                <a id="finalDlLink" href="#" target="_blank"
+                    class="w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD NOW
+                </a>
             </div>
         </div>
 
-        <div class="flex justify-end mb-2">
-            <div id="apiStatus"
-                class="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
-                <div id="statusDot" class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
-                <span id="statusText" class="text-xs font-mono text-slate-400">CHECKING API...</span>
+        <div class="flex justify-between items-center px-2">
+            <div id="apiStatus" class="flex items-center gap-2">
+                <div id="statusDot" class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></div>
+                <span id="statusText" class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Checking
+                    API...</span>
             </div>
+            <p id="statusMsg" class="text-[10px] text-slate-500 italic">Ready</p>
         </div>
 
-        <p id="statusMsg" class="text-center text-sm text-slate-500"></p>
+        <div id="history-container" class="glass-panel p-4 rounded-xl bg-slate-900/50 border border-slate-700 hidden">
+            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-widest flex justify-between">
+                <span>Recent Downloads</span>
+                <button onclick="clearHistory()" class="hover:text-red-400 transition-colors">Clear</button>
+            </h3>
+            <div id="history-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            </div>
+        </div>
     </div>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         lucide.createIcons();
 
         const apiUrl = "https://arda0.net/ytflex";
-
         const typeSelect = document.getElementById('typeSelect');
         const resContainer = document.getElementById('resContainer');
         const formatContainer = document.getElementById('formatContainer');
+        const historyContainer = document.getElementById('history-container');
+        const historyList = document.getElementById('history-list');
+
+        // Initialize History
+        window.onload = renderHistory;
 
         typeSelect.addEventListener('change', (e) => {
             const isVideo = e.target.value === 'video';
-            resContainer.classList.toggle('hidden', !isVideo);
-            formatContainer.classList.toggle('hidden', !isVideo);
+            resContainer.style.display = isVideo ? 'block' : 'none';
+            formatContainer.style.display = isVideo ? 'flex' : 'none';
         });
 
         async function handleFetch() {
             const btn = document.getElementById('dlBtn');
             const status = document.getElementById('statusMsg');
             const resultCard = document.getElementById('resultCard');
-            const link = document.getElementById('urlInput').value;
+            const urlInput = document.getElementById('urlInput');
 
-            if (!link) return alert("Please paste a link first!");
+            if (!urlInput.value) return alert("Please paste a link first!");
 
+            // UI State: Loading
             btn.disabled = true;
-            btn.innerHTML = `<span class="animate-spin mr-2">◌</span> Searching...`;
-            status.innerText = "Talking to server, this might take a moment...";
+            btn.innerHTML = `<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> FETCHING...`;
+            status.innerText = "Processing request...";
             resultCard.classList.add('hidden');
 
             const type = typeSelect.value;
@@ -132,7 +152,7 @@
             const mp4 = document.getElementById('mp4Check').checked;
 
             const baseUrl = `${apiUrl}/download/${type}`;
-            const params = new URLSearchParams({ link });
+            const params = new URLSearchParams({ link: urlInput.value });
             if (type === 'video') {
                 params.append('res', res);
                 params.append('mp4', mp4);
@@ -144,50 +164,104 @@
                 const info = data[0][0];
 
                 if (info && info.link) {
+                    // Update UI
                     document.getElementById('thumb').src = info.metadata.thumbnail;
                     document.getElementById('videoTitle').innerText = info.metadata.title;
-
-                    // Added File Size to the metadata string
-                    const size = info.metadata.filesize || 'Unknown size';
-                    document.getElementById('videoMeta').innerText = `${info.metadata.duration} • ${info.metadata.extension} • ${size}`;
+                    document.getElementById('videoMeta').innerText = `${info.metadata.duration} • ${info.metadata.extension} • ${info.metadata.filesize || 'N/A'}`;
+                    document.getElementById('finalUrlDisplay').value = info.link;
 
                     const dlLink = document.getElementById('finalDlLink');
                     dlLink.href = info.link;
-                    // Set download attribute to suggest filename
                     dlLink.setAttribute('download', `${info.metadata.title}.${info.metadata.extension}`);
 
                     resultCard.classList.remove('hidden');
-                    status.innerText = "Ready to download!";
+                    status.innerText = "Download ready!";
+
+                    // Save to History
+                    saveToHistory(info.metadata.title, info.link, info.metadata.thumbnail);
                 }
             } catch (err) {
-                status.innerText = "Error: Could not reach the server.";
+                status.innerText = "Error: Server unreachable";
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="search"></i> Fetch Download`;
+                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> FETCH DOWNLOAD`;
                 lucide.createIcons();
             }
         }
 
+        // --- History Logic ---
+        function saveToHistory(name, url, thumb) {
+            const history = JSON.parse(localStorage.getItem('ytflex_history') || '[]');
+            // Avoid duplicates
+            if (history.find(i => i.url === url)) return;
+
+            history.unshift({ name, url, thumb, date: new Date().toLocaleTimeString() });
+            localStorage.setItem('ytflex_history', JSON.stringify(history.slice(0, 10)));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('ytflex_history') || '[]');
+            if (history.length === 0) {
+                historyContainer.classList.add('hidden');
+                return;
+            }
+            historyContainer.classList.remove('hidden');
+            historyList.innerHTML = history.map(item => `
+                <div class="flex items-center justify-between bg-black/30 p-2 rounded-lg border border-white/5 group">
+                    <div class="flex items-center gap-3 truncate pr-2">
+                        <img src="${item.thumb}" class="w-10 h-7 object-cover rounded shadow-sm">
+                        <div class="flex flex-col truncate">
+                            <span class="text-[11px] font-medium text-slate-300 truncate">${item.name}</span>
+                            <span class="text-[8px] text-slate-600 uppercase font-bold">${item.date}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <a href="${item.url}" target="_blank" class="text-[9px] bg-indigo-900/40 hover:bg-indigo-800 px-2 py-1.5 rounded text-indigo-300 transition-colors font-bold">OPEN</a>
+                        <button onclick="copyToClipboard('${item.url}', this)" class="text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-white transition-colors font-bold">COPY</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            localStorage.removeItem('ytflex_history');
+            renderHistory();
+        }
+
+        async function copyToClipboard(text, btn) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = btn.innerText;
+                btn.innerText = 'COPIED!';
+                btn.classList.replace('bg-slate-700', 'bg-green-700');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.replace('bg-green-700', 'bg-slate-700');
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        }
+
+        // API Status Check
         window.addEventListener('DOMContentLoaded', async () => {
             const dot = document.getElementById('statusDot');
             const text = document.getElementById('statusText');
-
             try {
                 const response = await fetch(`${apiUrl}/root`);
                 if (response.ok) {
                     dot.classList.replace('bg-yellow-500', 'bg-green-500');
                     dot.classList.remove('animate-pulse');
                     text.innerText = "API ONLINE";
-                    text.classList.replace('text-slate-400', 'text-green-400');
-                } else {
-                    throw new Error();
+                    text.classList.replace('text-slate-500', 'text-green-500');
                 }
             } catch (err) {
                 dot.classList.replace('bg-yellow-500', 'bg-red-500');
                 dot.classList.remove('animate-pulse');
                 text.innerText = "API OFFLINE";
-                text.classList.replace('text-slate-400', 'text-red-400');
+                text.classList.replace('text-slate-500', 'text-red-500');
             }
         });
     </script>
