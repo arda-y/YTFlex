@@ -30,4 +30,6 @@ def create_download_link(filedir: str, filename: str) -> str:
         os.path.join(filedir, filename), os.path.join(filedir, random_string, filename)
     )  # move file into the random folder we just created
 
-    return f"{ip_or_domain}/{quote(cdn_location)}/{quote(random_string)}/{quote(filename)}"
+    return (
+        f"{ip_or_domain}/{quote(cdn_location)}/{quote(random_string)}/{quote(filename)}"
+    )
