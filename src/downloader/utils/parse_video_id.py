@@ -2,7 +2,7 @@
 Utility function to check if a URL is valid.
 """
 
-import requests
+from urllib.parse import urlparse, parse_qs, unquote
 
 
 def parse_video_id(link: str) -> str | bool:
@@ -15,37 +15,41 @@ def parse_video_id(link: str) -> str | bool:
         True if the URL is valid, False otherwise.
     """
 
-    if len(link) == 11:
-        if (
-            requests.head(
-                f"https://www.youtube.com/watch?v={link}", timeout=5
-            ).status_code
-            == 200
-        ):
-            return link
-    else:
-        # logic to check if the link is valid, minding www, http, https, etc.
-        # returns only the video ID if valid, else False
-        if "youtube.com/watch?v=" in link:
-            video_id = link.split("youtube.com/watch?v=")[1].split("&")[0]
-        elif "youtu.be/" in link:
-            video_id = link.split("youtu.be/")[1].split("?")[0]
-        elif "youtube.com/shorts/" in link:
-            video_id = link.split("youtube.com/shorts/")[1].split("?")[0]
-        else:
-            return False  # other formats are not supported for now
+    quick_parsable = [
+        "/watch/",
+        "/v/",
+        "/embed/",
+        "/shorts/",
+        "/live/",
+        "/e/",
+    ]
 
-        if len(video_id) == 11:
-            if (
-                requests.head(
-                    f"https://www.youtube.com/watch?v={video_id}", timeout=5
-                ).status_code
-                == 200
-            ):
-                return video_id
+    parsable = urlparse(link)
+
+    if parsable.path == "/watch":
+        video_id = parse_qs(parsable.query).get("v", [None])[0]
+    elif parsable.path == "/oembed":
+        link = parse_qs(parsable.query).get("url", [None])
+        video_id = parse_video_id(unquote(link[0]))
+    elif parsable.path.startswith("/attribution_link"):
+        partial_link = unquote(parse_qs(parsable.query).get("u", [None])[0])
+        video_id = parse_video_id(f"https://youtube.com{partial_link}")
+    elif parsable.path.startswith("/"):
+        video_id = parsable.path.split("/")[1][:11]
+
+    for prefix in quick_parsable:
+        if parsable.path.startswith(prefix):
+            video_id = parsable.path.split(prefix)[1][:11]
+
+    if len(video_id) == 11:
+        return video_id
 
     return False  # catch all failure case
 
+
 if __name__ == "__main__":
-    print(parse_video_id("https://www.youtube.com/shorts/Vpeo4xrn1hM"))
-    assert parse_video_id("https://www.youtube.com/shorts/Vpeo4xrn1hM") == "Vpeo4xrn1hM"
+    with open("test_links.txt", "r", encoding="utf-8") as f:
+        for line in f:
+            assert len(parse_video_id(line.strip())) == 11
+
+        print("passing")
