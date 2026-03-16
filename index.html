@@ -4,7 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YTFlex Downloader</title>
+
+    <meta property="og:title" content="ytflex | yet another youtube downloader">
+    <meta property="og:description" content="dead simple youtube downloader. no accounts, 2gb limit, 1 hour retention.">
+    <meta property="og:site_name" content="ytflex">
+    <meta property="og:image" content="https://arda0.net/assets/xp.gif">
+    <meta property="og:url" content="https://arda0.net/ytflex/">
+
+    <title>ytflex | simple youtube downloader</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -20,8 +27,23 @@
     </style>
 </head>
 
-<body class="text-slate-200 min-h-screen flex items-center justify-center p-4">
+<header class="w-full max-w-2xl mx-auto px-4 py-8 flex justify-between items-end">
+    <div class="flex flex-col gap-1">
+        <a href="https://arda0.net" target="_self"
+            class="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors tracking-[0.2em] uppercase flex items-center gap-2">
+            <span>←</span> back to home
+        </a>
+        <h1 class="text-3xl font-black text-white tracking-tight">
+            yt<span class="text-blue-500">flex</span>
+        </h1>
+    </div>
+</header>
 
+<div class="max-w-2xl mx-auto px-4 mb-8">
+    <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+</div>
+
+<main class="text-slate-200 p-4 items-center justify-center flex">
     <div class="max-w-lg w-full space-y-4">
         <div class="glass-panel p-8 rounded-2xl shadow-2xl bg-slate-900/50 backdrop-blur-md border border-slate-700">
             <header class="mb-8 text-center">
@@ -265,6 +287,6 @@
             }
         });
     </script>
-</body>
+</main>
 
 </html>
