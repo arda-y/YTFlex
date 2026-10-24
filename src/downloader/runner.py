@@ -21,12 +21,27 @@ by having the logic here.
 
 
 import os
+import threading
 from pathlib import Path
 from yt_dlp import YoutubeDL
+from yt_dlp.utils import DownloadError
 from src.downloader.utils.base import *
 from src.db_handler.bandwidth import record_download
 
 DOWNLOAD_ROOT = Path("./mountpoint/downloads").resolve()
+
+# Downloads run in worker threads, so several can be active at once. yt-dlp writes
+# to a shared folder under the video title until create_download_link moves the file
+# into its own random folder. Two requests with the same title and type must not
+# overlap in that window, so each (title, type) pair gets its own lock.
+_title_locks: dict[tuple[str, bool], threading.Lock] = {}
+_title_locks_guard = threading.Lock()
+
+
+def _title_lock(title: str, is_video_request: bool) -> threading.Lock:
+    """Returns the lock for this (title, type) pair, creating it on first use."""
+    with _title_locks_guard:
+        return _title_locks.setdefault((title, is_video_request), threading.Lock())
 
 
 def download_files(
@@ -35,6 +50,7 @@ def download_files(
     preferred_res: str = "1080",
     convert_to_mp4: bool = False,
     client_ip: str | None = None,
+    max_file_size: int | None = None,
 ):
     """
     Downloads files from youtube using yt-dlp.
@@ -53,6 +69,8 @@ def download_files(
 
         convert_to_mp4: Whether to convert the downloaded file to mp4 or not. Defaults to False.
         Will have no effect if downloading audio only.
+
+        max_file_size: File size limit in MB. Defaults to MAX_FILE_SIZE from config.yaml.
     """
 
     # check if url is valid
@@ -74,14 +92,28 @@ def download_files(
         )
 
     ydl_opts = ydl_opts_builder(
-        video.title, is_video_request, preferred_res, convert_to_mp4
+        video.title, is_video_request, preferred_res, convert_to_mp4, max_file_size
     )
+
+    with _title_lock(video.title, is_video_request):
+        return _download_and_respond(
+            link, video, ydl_opts, client_ip, download_info
+        )
+
+
+def _download_and_respond(link, video, ydl_opts, client_ip, download_info):
+    """Runs yt-dlp and builds the response. The caller holds the title lock."""
 
     # create a download object
     filename_collector = FilenameCollectorPP()
     ydl = YoutubeDL(ydl_opts)
     ydl.add_post_processor(filename_collector)
-    ydl.download([f"https://www.youtube.com/watch?v={link}"])
+    try:
+        ydl.download([f"https://www.youtube.com/watch?v={link}"])
+    except DownloadError:
+        return create_error_response(
+            "Download failed. The video may be unavailable, or no version fits the size limit."
+        )
     last_downloaded_dir: str = filename_collector.filenames[-1]
 
     # Containment check: confirm yt-dlp actually wrote inside DOWNLOAD_ROOT.

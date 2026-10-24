@@ -11,6 +11,7 @@ def ydl_opts_builder(
     is_video_request: bool,
     preferred_res: str = "720",
     convert_to_mp4: bool = False,
+    max_file_size: int | None = None,
 ):
     """
     Utility function for building the options for yt-dlp.
@@ -25,9 +26,11 @@ def ydl_opts_builder(
 
         convert_to_mp4: Whether to convert the downloaded file to mp4 or not. Defaults to False.
         Will have no effect if downloading audio only.
+
+        max_file_size: File size limit in MB. Defaults to MAX_FILE_SIZE from config.yaml.
     """
     download_path = "./mountpoint/downloads"
-    max_file_size = config.get("MAX_FILE_SIZE")
+    max_file_size = max_file_size or config.get("MAX_FILE_SIZE")
     show_yt_dlp_output = config.get("SHOW_YT_DLP_OUTPUT")
     bgutil_provider_url = config.get("BGUTIL_PROVIDER_URL")
 
@@ -66,7 +69,11 @@ def ydl_opts_builder(
 
     else:
         ydl_opts = {
-            "format": f"bestaudio/best[filesize<{int(max_file_size)}M]",
+            "format": (
+                f"bestaudio[filesize<{int(max_file_size)}M]"
+                f"/bestaudio[filesize_approx<{int(max_file_size)}M]"
+                f"/best[filesize<{int(max_file_size)}M]"
+            ),
             "outtmpl": os.path.join(download_path, f"{title}"),
             "windowsfilenames": True,
             "quiet": not show_yt_dlp_output,

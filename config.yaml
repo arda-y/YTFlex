@@ -19,6 +19,14 @@ MAX_RES: 2160 # type: int
 # Max audio file size is the same when downloading audio only.
 MAX_FILE_SIZE: 2000 # type: int
 
+# Lower limit (MB) for requests that come from the browser extension (userscript).
+# The userscript adds client=ext to its requests. Same rules as MAX_FILE_SIZE.
+EXT_MAX_FILE_SIZE: 200 # type: int
+
+# How many downloads may run at the same time. A request that arrives when all
+# slots are busy gets HTTP 503 right away. Read once at startup.
+MAX_CONCURRENT_DOWNLOADS: 3 # type: int
+
 # The IP or domain to use when generating the download link.
 # Has no effect on nginx or docker command, but is used in the API message returned.
 # Passing environment variable from docker run command will override this.
@@ -47,6 +55,7 @@ DOWNLOAD_RATE_LIMIT: "1/10 seconds;5/minute" # type: str
 # Only these immediate peers are allowed to provide forwarded IP headers.
 # Keep this list narrow and include your reverse proxy container/host IPs.
 TRUSTED_PROXIES: # type: list[str]
+  - "100.78.39.66"
   - "127.0.0.1"
   - "172.17.0.1"
   - "172.18.0.1"

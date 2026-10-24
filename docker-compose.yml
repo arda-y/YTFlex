@@ -4,7 +4,7 @@ services:
     container_name: ytflex
     restart: always
     ports:
-      - "127.0.0.1:2002:2002"
+      - "100.106.16.101:2002:2002"
     volumes:
       - /app/ytflex/:/app/mountpoint/
     depends_on:

@@ -141,6 +141,18 @@
             <div id="history-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
             </div>
         </div>
+
+        <div class="glass-panel p-4 rounded-xl">
+            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-widest">Browser shortcut</h3>
+            <p class="text-xs text-slate-400 mb-3">
+                Adds Video and Audio buttons under the title on every YouTube video page.
+                Needs a userscript manager such as Tampermonkey or Violentmonkey.
+            </p>
+            <a href="https://arda0.net/ytflex.user.js"
+                class="w-full bg-slate-700 hover:bg-slate-600 text-white text-center font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                <i data-lucide="puzzle" class="w-4 h-4"></i> ADD TO MY BROWSER
+            </a>
+        </div>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -189,6 +201,10 @@
             try {
                 const response = await fetch(`${baseUrl}?${params.toString()}`);
                 const data = await response.json();
+                if (!Array.isArray(data)) {
+                    // Error replies are {"message": ...} (busy, bad link, too big, ...)
+                    return alert(data.message || "Something went wrong.");
+                }
                 const info = data[0][0];
 
                 if (info && info.link) {
