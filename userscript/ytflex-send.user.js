@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Send to YTFlex
 // @namespace    https://arda0.net/ytflex/
-// @version      1.6
+// @version      1.8
 // @description  Video/Audio toggle, quality and Download buttons next to the title of a YouTube watch page, and a Download button (video, best quality) in the Shorts action bar. Sends the video to YTFlex and starts the download.
 // @updateURL    https://arda0.net/ytflex.user.js
 // @downloadURL  https://arda0.net/ytflex.user.js
@@ -11,14 +11,15 @@
 // @grant        GM_openInTab
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @connect      arda0.net
+// @grant        GM_registerMenuCommand
+// @connect      *
 // @run-at       document-idle
 // ==/UserScript==
 
 (function () {
     "use strict";
 
-    const API = "https://arda0.net/ytflex";
+    const DEFAULT_API = "https://arda0.net/ytflex";
     const RES = ["1080", "720", "480"]; // 1080p is the maximum
     const BOX_ID = "ytflexBox";
     const SHORTS_ID = "ytflexShortsBtn";
@@ -37,6 +38,21 @@
         const r = GM_getValue("res", "1080");
         return RES.includes(r) ? r : "1080";
     };
+
+    // The server address can be changed from the userscript manager's menu, so anyone can use their own YTFlex instance.
+    const getApi = () => String(GM_getValue("api", DEFAULT_API)).replace(/\/+$/, "") || DEFAULT_API;
+
+    GM_registerMenuCommand("YTFlex: set server address", () => {
+        const input = prompt(
+            `YTFlex server address (leave empty to use the default, ${DEFAULT_API}).\nCurrent: ${getApi()}`,
+            getApi()
+        );
+        if (input === null) return;
+        const value = input.trim().replace(/\/+$/, "");
+        if (value && !/^https?:\/\/[^\s/]+/i.test(value)) return alert("The address must start with http:// or https://");
+        GM_setValue("api", value || DEFAULT_API);
+        alert(`YTFlex server: ${getApi()}`);
+    });
 
     // Watch ID only: drops playlist and timestamp parameters. Shorts work as normal videos.
     function videoLink() {
@@ -70,7 +86,7 @@
         };
         GM_xmlhttpRequest({
             method: "GET",
-            url: `${API}/download/${type}?${params}`,
+            url: `${getApi()}/download/${type}?${params}`,
             timeout: 300000, // the server downloads first; nginx waits up to 300 s
             onload(r) {
                 finish();
@@ -84,7 +100,7 @@
                     GM_openInTab(info.link, { active: false, insert: true });
                 } catch (e) {
                     // A Cloudflare challenge or a server error returns HTML or an error body.
-                    say(`Failed (HTTP ${r.status}). Open arda0.net/ytflex once in this browser, then retry.`, 10000, "error");
+                    say(`Failed (HTTP ${r.status}). Open ${getApi()} once in this browser, then retry.`, 10000, "error");
                     console.error("[YTFlex]", e, r.responseText.slice(0, 300));
                 }
             },
@@ -136,8 +152,7 @@
             maxWidth: "220px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
         });
 
-        function refresh() {
-            if (!box.isConnected) return false;
+        function update() {
             const type = getType();
             toggle.textContent = type === "video" ? "Video" : "Audio";
             resBtn.textContent = `${getRes()}p`;
@@ -148,6 +163,13 @@
                 b.style.opacity = b.disabled ? "0.4" : "1";
                 b.style.cursor = b.disabled ? "default" : "pointer";
             }
+        }
+        // Not attached to the page yet when first built, so only drop it once it has been attached.
+        let attached = false;
+        function refresh() {
+            if (box.isConnected) attached = true;
+            else if (attached) return false;
+            update();
         }
 
         let timer;
@@ -170,7 +192,7 @@
 
         box.append(tag, toggle, resBtn, dl, status);
         refreshers.add(refresh);
-        refresh();
+        update();
         return box;
     }
 
@@ -220,14 +242,19 @@
 
         // The label shows the quality, "..." while a download runs, then Done or Failed.
         let hold = null;
-        function refresh() {
-            if (!host.isConnected) return false;
+        function update() {
             btn.disabled = busy;
             btn.style.opacity = busy ? "0.4" : "1";
             if (!hold) {
                 label.textContent = busy ? "..." : `${SHORTS_OPTS.res}p`;
                 btn.title = `Download with YTFlex (video, ${SHORTS_OPTS.res}p)`;
             }
+        }
+        let attached = false;
+        function refresh() {
+            if (host.isConnected) attached = true;
+            else if (attached) return false;
+            update();
         }
         let timer;
         const say = (msg, ms, state) => {
@@ -247,7 +274,7 @@
         });
 
         refreshers.add(refresh);
-        refresh();
+        update();
         return host;
     }
 

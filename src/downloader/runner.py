@@ -51,6 +51,7 @@ def download_files(
     convert_to_mp4: bool = False,
     client_ip: str | None = None,
     max_file_size: int | None = None,
+    client: str = "other",
 ):
     """
     Downloads files from youtube using yt-dlp.
@@ -71,6 +72,8 @@ def download_files(
         Will have no effect if downloading audio only.
 
         max_file_size: File size limit in MB. Defaults to MAX_FILE_SIZE from config.yaml.
+
+        client: Kind of caller ("ext" for the browser extension), stored with the download record.
     """
 
     # check if url is valid
@@ -97,11 +100,11 @@ def download_files(
 
     with _title_lock(video.title, is_video_request):
         return _download_and_respond(
-            link, video, ydl_opts, client_ip, download_info
+            link, video, ydl_opts, client_ip, download_info, client
         )
 
 
-def _download_and_respond(link, video, ydl_opts, client_ip, download_info):
+def _download_and_respond(link, video, ydl_opts, client_ip, download_info, client):
     """Runs yt-dlp and builds the response. The caller holds the title lock."""
 
     # create a download object
@@ -138,7 +141,7 @@ def _download_and_respond(link, video, ydl_opts, client_ip, download_info):
     # an otherwise-successful download.
     if client_ip:
         try:
-            record_download(client_ip, file_size)
+            record_download(client_ip, file_size, client)
         except Exception:  # pylint: disable=broad-except
             pass
 

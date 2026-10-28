@@ -76,6 +76,7 @@ async def audio_download(request: Request, link: str, client: str = "api"):
         is_video_request=False,
         client_ip=get_client_ip(request),
         max_file_size=_size_limit_mb(client),
+        client=client,
     )
 
     return raw_dl_info
@@ -95,6 +96,7 @@ async def video_download(
         convert_to_mp4=mp4,
         client_ip=get_client_ip(request),
         max_file_size=_size_limit_mb(client),
+        client=client,
     )
 
     return raw_dl_info

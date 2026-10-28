@@ -14,6 +14,10 @@ sudo docker-compose up -d
 
 Stop with `sudo docker-compose down`.
 
+## Userscript
+
+`userscript/ytflex-send.user.js` adds download buttons to YouTube. It talks to `https://arda0.net/ytflex` by default. To use your own instance, click the userscript manager's icon, choose **YTFlex: set server address** and enter your instance's address (leave it empty to go back to the default).
+
 ## Config (`config.yaml`)
 
 | Setting | Description | Default |

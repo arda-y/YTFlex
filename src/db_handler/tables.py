@@ -15,6 +15,7 @@ from sqlalchemy import (
     SmallInteger,
     Float,
 )
+from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 from src.db_handler import _Base, _engine
 
@@ -100,8 +101,31 @@ class BandwidthRecord(_Base):
     ip = Column(String(45), nullable=False, index=True)
     bytes = Column(Integer, nullable=False)
     timestamp = Column(Float, nullable=False, index=True)
+    # Which kind of caller made the request: "ext" for the browser extension
+    # (client=ext), "other" for everything else. See bandwidth.KNOWN_CLIENTS.
+    client = Column(String(16), nullable=False, default="other", server_default="other")
 
 
 # Create all tables in the database
 # This is equivalent to "Create Table" statements in raw SQL
 _Base.metadata.create_all(_engine)
+
+
+def _add_missing_columns():
+    """
+    create_all never alters a table that already exists, so a column added to a
+    model later has to be added by hand. Safe to run on every start.
+    Rows written before the column existed get the default value ("other").
+    """
+    with _engine.begin() as conn:
+        columns = {c["name"] for c in inspect(conn).get_columns("ytflex_bandwidth_records")}
+        if "client" not in columns:
+            conn.execute(
+                text(
+                    "ALTER TABLE ytflex_bandwidth_records "
+                    "ADD COLUMN client VARCHAR(16) NOT NULL DEFAULT 'other'"
+                )
+            )
+
+
+_add_missing_columns()
