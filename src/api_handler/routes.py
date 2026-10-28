@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from src.api_handler.app import app, download_rate_limit, get_client_ip, limiter
 from src.downloader.runner import download_files
 
-__all__ = ["root", "faq", "audio_download", "video_download"]
+__all__ = ["root", "faq", "userscript", "audio_download", "video_download"]
 
 # download_files blocks for the whole download, so it runs in a worker thread.
 # Calling it directly from an async route would freeze the event loop, and with it
@@ -63,6 +63,16 @@ async def faq():
     file_path = os.path.join(os.path.dirname(__file__), "..", "..", "faq.html")
 
     return FileResponse(file_path)
+
+
+@app.get("/ytflex.user.js")
+async def userscript():
+    """The browser userscript. Served from the repo copy, so it cannot drift from the source."""
+    file_path = os.path.join(
+        os.path.dirname(__file__), "..", "..", "userscript", "ytflex-send.user.js"
+    )
+
+    return FileResponse(file_path, media_type="text/javascript; charset=utf-8")
 
 
 @app.get("/download/audio")
