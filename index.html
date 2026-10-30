@@ -14,6 +14,7 @@
 
     <title>ytflex | simple youtube downloader</title>
     <script src="https://arda0.net/assets/tailwind.min.js"></script>
+    <script src="https://arda0.net/assets/qrcode.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body {
@@ -126,6 +127,11 @@
                     </button>
                 </div>
 
+                <div id="qrBox" class="hidden flex flex-col items-center gap-1 mb-3">
+                    <div id="qrHolder"></div>
+                    <span class="text-[10px] text-slate-500">Scan to open the download link on another device</span>
+                </div>
+
                 <a id="finalDlLink" href="#" target="_blank"
                     class="w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
                     <i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD NOW
@@ -166,8 +172,12 @@
         const historyContainer = document.getElementById('history-container');
         const historyList = document.getElementById('history-list');
 
-        // Initialize History
+        // How long the server keeps a file. Keep in sync with MAX_FILE_AGE in config.yaml (seconds).
+        const FILE_LIFETIME_MS = 3600 * 1000;
+
+        // Initialize History, then drop expired entries while the page stays open
         window.onload = renderHistory;
+        setInterval(renderHistory, 30000);
 
         typeSelect.addEventListener('change', (e) => {
             const isVideo = e.target.value === 'video';
@@ -218,6 +228,7 @@
                     dlLink.href = info.link;
                     dlLink.setAttribute('download', `${info.metadata.title}.${info.metadata.extension}`);
 
+                    showQr(info.link);
                     resultCard.classList.remove('hidden');
 
                     // Save to History
@@ -233,19 +244,95 @@
             }
         }
 
+        // --- QR code ---
+        // QR code of a link (qrcode-generator, hosted next to tailwind). White background
+        // with a quiet zone, so it scans in dark mode too. Returns null if the lib is missing.
+        function qrImage(url, px) {
+            try {
+                const q = qrcode(0, 'M');
+                q.addData(url);
+                q.make();
+                const img = document.createElement('img');
+                img.src = q.createDataURL(4, 16);
+                img.width = px;
+                img.height = px;
+                img.alt = 'QR code of the link';
+                img.className = 'rounded bg-white';
+                img.style.imageRendering = 'pixelated';
+                return img;
+            } catch (err) {
+                console.error('QR failed:', err);
+                return null;
+            }
+        }
+
+        // Pop-up with a big QR code. Closes on the X, a click outside the card, or Escape.
+        function showQrModal(url, title) {
+            const img = qrImage(url, 256);
+            if (!img) return;
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4';
+            const close = () => {
+                overlay.remove();
+                document.removeEventListener('keydown', onKey);
+            };
+            const onKey = (e) => { if (e.key === 'Escape') close(); };
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+            document.addEventListener('keydown', onKey);
+
+            const card = document.createElement('div');
+            card.className = 'relative bg-slate-900 border border-slate-700 rounded-2xl p-6 flex flex-col items-center gap-3 max-w-full';
+
+            const x = document.createElement('button');
+            x.className = 'absolute top-2 right-3 text-slate-400 hover:text-white text-xl leading-none';
+            x.setAttribute('aria-label', 'Close');
+            x.textContent = '\u00D7';
+            x.addEventListener('click', close);
+
+            const name = document.createElement('div');
+            name.className = 'text-xs font-mono text-slate-300 max-w-[16rem] truncate';
+            name.textContent = title;
+
+            const hint = document.createElement('div');
+            hint.className = 'text-[10px] text-slate-500';
+            hint.textContent = 'Scan to open the link on another device';
+
+            card.append(x, name, img, hint);
+            overlay.append(card);
+            document.body.append(overlay);
+        }
+
+        function showQr(url) {
+            const box = document.getElementById('qrBox');
+            const img = qrImage(url, 168);
+            document.getElementById('qrHolder').replaceChildren(...(img ? [img] : []));
+            box.classList.toggle('hidden', !img);
+        }
+
         // --- History Logic ---
         function saveToHistory(name, url, thumb) {
             const history = JSON.parse(localStorage.getItem('ytflex_history') || '[]');
             // Avoid duplicates
             if (history.find(i => i.url === url)) return;
 
-            history.unshift({ name, url, thumb, date: new Date().toLocaleTimeString() });
+            history.unshift({ name, url, thumb, date: new Date().toLocaleTimeString(), timestamp: Date.now() });
             localStorage.setItem('ytflex_history', JSON.stringify(history.slice(0, 10)));
             renderHistory();
         }
 
         function renderHistory() {
-            const history = JSON.parse(localStorage.getItem('ytflex_history') || '[]');
+            let history = JSON.parse(localStorage.getItem('ytflex_history') || '[]');
+
+            // The server deletes a file once it is older than FILE_LIFETIME_MS, so the
+            // entry goes too. Entries without a timestamp are old ones from before
+            // timestamps existed (only a clock time was saved), so they are dropped.
+            const now = Date.now();
+            const kept = history.filter(item => item.timestamp && (now - item.timestamp) < FILE_LIFETIME_MS);
+            if (kept.length !== history.length) {
+                localStorage.setItem('ytflex_history', JSON.stringify(kept));
+            }
+            history = kept;
+
             if (history.length === 0) {
                 historyContainer.classList.add('hidden');
                 return;
@@ -289,14 +376,19 @@
                 openLink.href = item.url;
                 openLink.target = '_blank';
                 openLink.className = 'text-[9px] bg-blue-900/40 hover:bg-blue-800 px-2 py-1.5 rounded text-blue-300 transition-colors font-bold';
-                openLink.textContent = 'OPEN';
+                openLink.textContent = 'DOWNLOAD';
 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-white transition-colors font-bold';
                 copyBtn.textContent = 'COPY';
                 copyBtn.addEventListener('click', () => copyToClipboard(item.url, copyBtn));
 
-                right.append(openLink, copyBtn);
+                const qrBtn = document.createElement('button');
+                qrBtn.className = 'text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-white transition-colors font-bold';
+                qrBtn.textContent = 'QR';
+                qrBtn.addEventListener('click', () => showQrModal(item.url, item.name));
+
+                right.append(openLink, copyBtn, qrBtn);
                 row.append(left, right);
                 return row;
             }));
