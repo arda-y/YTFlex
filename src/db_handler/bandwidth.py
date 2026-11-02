@@ -29,7 +29,9 @@ def record_download(ip: str, size_bytes: int, client: str = "other") -> None:
     client = client if client in KNOWN_CLIENTS else "other"
     with get_session() as session:
         session.add(
-            BandwidthRecord(ip=ip, bytes=size_bytes, timestamp=time.time(), client=client)
+            BandwidthRecord(
+                ip=ip, bytes=size_bytes, timestamp=time.time(), client=client
+            )
         )
         session.commit()
 
@@ -62,11 +64,15 @@ def total_bytes_downloaded(since_seconds: float | None = None) -> int:
     with get_session() as session:
         query = select(func.coalesce(func.sum(BandwidthRecord.bytes), 0))
         if since_seconds is not None:
-            query = query.where(BandwidthRecord.timestamp >= time.time() - since_seconds)
+            query = query.where(
+                BandwidthRecord.timestamp >= time.time() - since_seconds
+            )
         return int(session.execute(query).scalar_one())
 
 
-def downloads_by_client(since_seconds: float | None = None) -> list[tuple[str, int, int]]:
+def downloads_by_client(
+    since_seconds: float | None = None,
+) -> list[tuple[str, int, int]]:
     """
     Download count and total bytes per client, e.g. [("ext", 12, 345678), ("other", 80, ...)].
     Optionally restricted to the last `since_seconds`.
@@ -80,5 +86,7 @@ def downloads_by_client(since_seconds: float | None = None) -> list[tuple[str, i
             func.coalesce(func.sum(BandwidthRecord.bytes), 0),
         ).group_by(BandwidthRecord.client)
         if since_seconds is not None:
-            query = query.where(BandwidthRecord.timestamp >= time.time() - since_seconds)
+            query = query.where(
+                BandwidthRecord.timestamp >= time.time() - since_seconds
+            )
         return [(c, int(n), int(b)) for c, n, b in session.execute(query).all()]

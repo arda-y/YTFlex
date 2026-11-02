@@ -52,7 +52,9 @@ def _load_trusted_proxies() -> set[str]:
     if not isinstance(trusted_proxies, list):
         raise ValueError("TRUSTED_PROXIES must be a list in config.yaml.")
 
-    parsed_proxies = {str(proxy).strip() for proxy in trusted_proxies if str(proxy).strip()}
+    parsed_proxies = {
+        str(proxy).strip() for proxy in trusted_proxies if str(proxy).strip()
+    }
 
     gateway_ip = get_docker_gateway_ip()
     if gateway_ip:
@@ -94,7 +96,9 @@ def limiter_key(request: Request) -> str:
     return get_client_ip(request)
 
 
-def rate_limit_exceeded_handler(_request: Request, exc: RateLimitExceeded) -> JSONResponse:
+def rate_limit_exceeded_handler(
+    _request: Request, exc: RateLimitExceeded
+) -> JSONResponse:
     """Returns a consistent error payload when a rate limit is exceeded."""
 
     return JSONResponse(status_code=429, content={"detail": str(exc)})

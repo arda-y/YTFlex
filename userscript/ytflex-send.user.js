@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Send to YTFlex
 // @namespace    https://arda0.net/ytflex/
-// @version      1.8
+// @version      1.9
 // @description  Video/Audio toggle, quality and Download buttons next to the title of a YouTube watch page, and a Download button (video, best quality) in the Shorts action bar. Sends the video to YTFlex and starts the download.
 // @updateURL    https://arda0.net/ytflex.user.js
 // @downloadURL  https://arda0.net/ytflex.user.js
@@ -12,7 +12,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @connect      *
+// @connect      arda0.net
 // @run-at       document-idle
 // ==/UserScript==
 

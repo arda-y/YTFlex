@@ -21,7 +21,9 @@ _db_string = config.get(
 # engine tries to open a connection. Guarded to sqlite:/// URLs only, since
 # database_url can be overridden to something else entirely via config.
 if _db_string.startswith("sqlite:///"):
-    Path(_db_string.removeprefix("sqlite:///")).parent.mkdir(parents=True, exist_ok=True)
+    Path(_db_string.removeprefix("sqlite:///")).parent.mkdir(
+        parents=True, exist_ok=True
+    )
 
 # Create the database engine
 _engine = create_engine(_db_string)

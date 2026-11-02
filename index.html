@@ -165,7 +165,8 @@
     <script>
         lucide.createIcons();
 
-        const apiUrl = "https://arda0.net/ytflex";
+        // test instances (served from a bare IP:port) talk to themselves, the real site to the public URL
+        const apiUrl = location.hostname === "arda0.net" ? "https://arda0.net/ytflex" : location.origin;
         const typeSelect = document.getElementById('typeSelect');
         const resContainer = document.getElementById('resContainer');
         const formatContainer = document.getElementById('formatContainer');
@@ -197,6 +198,30 @@
             btn.innerHTML = `<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> FETCHING...`;
             resultCard.classList.add('hidden');
 
+            // The download request blocks until the file is ready, so progress comes from polling.
+            const progressId = Array.from(crypto.getRandomValues(new Uint8Array(12)),
+                b => (b % 36).toString(36)).join('');
+            const stageLabel = { preparing: 'PREPARING', starting: 'STARTING', merging: 'MERGING',
+                converting: 'CONVERTING', finishing: 'FINISHING' };
+            const spinner = '<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>';
+            const poll = setInterval(async () => {
+                try {
+                    const r = await fetch(`${apiUrl}/progress/${progressId}`);
+                    if (!r.ok) return;
+                    const p = await r.json();
+                    if (p.stage === 'downloading') {
+                        btn.innerHTML = `${spinner} DOWNLOADING ${p.percent}%`;
+                        btn.style.background = `linear-gradient(to right, #2563eb ${p.percent}%, #1e3a8a ${p.percent}%)`;
+                    } else {
+                        // no real percentage for conversion: show the stage and how long it has been running
+                        const slow = p.stage === 'converting' || p.stage === 'merging';
+                        btn.innerHTML = `${spinner} ${stageLabel[p.stage] || 'WORKING'}${slow ? ' · ' + p.elapsed + 's' : '...'}`;
+                        btn.style.background = '';
+                        btn.classList.toggle('animate-pulse', slow);
+                    }
+                } catch (e) { /* keep the last label */ }
+            }, 500);
+
             const type = typeSelect.value;
             const res = document.getElementById('resSelect').value;
             const mp4 = document.getElementById('mp4Check').checked;
@@ -207,6 +232,7 @@
                 params.append('res', res);
                 params.append('mp4', mp4);
             }
+            params.append('progress_id', progressId);
 
             try {
                 const response = await fetch(`${baseUrl}?${params.toString()}`);
@@ -238,6 +264,9 @@
                 alert("Error: Server unreachable");
                 console.error(err);
             } finally {
+                clearInterval(poll);
+                btn.classList.remove('animate-pulse');
+                btn.style.background = '';
                 btn.disabled = false;
                 btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> FETCH DOWNLOAD`;
                 lucide.createIcons();

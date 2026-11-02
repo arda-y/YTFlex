@@ -26,6 +26,7 @@ from pathlib import Path
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
 from src.downloader.utils.base import *
+from src.downloader.utils import progress
 from src.db_handler.bandwidth import record_download
 
 DOWNLOAD_ROOT = Path("./mountpoint/downloads").resolve()
@@ -52,6 +53,7 @@ def download_files(
     client_ip: str | None = None,
     max_file_size: int | None = None,
     client: str = "other",
+    progress_id: str | None = None,
 ):
     """
     Downloads files from youtube using yt-dlp.
@@ -74,7 +76,12 @@ def download_files(
         max_file_size: File size limit in MB. Defaults to MAX_FILE_SIZE from config.yaml.
 
         client: Kind of caller ("ext" for the browser extension), stored with the download record.
+
+        progress_id: Optional id the caller polls through GET /progress/{id}.
     """
+
+    if progress_id:
+        progress.update(progress_id, stage="preparing", percent=0)
 
     # check if url is valid
     print(f"Checking URL: {passed_url}")
@@ -100,17 +107,23 @@ def download_files(
 
     with _title_lock(video.title, is_video_request):
         return _download_and_respond(
-            link, video, ydl_opts, client_ip, download_info, client
+            link, video, ydl_opts, client_ip, download_info, client, progress_id
         )
 
 
-def _download_and_respond(link, video, ydl_opts, client_ip, download_info, client):
+def _download_and_respond(
+    link, video, ydl_opts, client_ip, download_info, client, progress_id=None
+):
     """Runs yt-dlp and builds the response. The caller holds the title lock."""
 
     # create a download object
     filename_collector = FilenameCollectorPP()
     ydl = YoutubeDL(ydl_opts)
     ydl.add_post_processor(filename_collector)
+    if progress_id:
+        download_hook, pp_hook = progress.make_hooks(progress_id)
+        ydl.add_progress_hook(download_hook)
+        ydl.add_postprocessor_hook(pp_hook)
     try:
         ydl.download([f"https://www.youtube.com/watch?v={link}"])
     except DownloadError:

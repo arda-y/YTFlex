@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ytflex | no longer</title><link rel="icon" href="/assets/favicon">
+<style>body{background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif;display:flex;min-height:100vh;
+align-items:center;justify-content:center;margin:0;text-align:center}
+.c{padding:2rem;max-width:26rem}a{color:#7dd3fc}.m{color:#64748b;font-size:.85rem;margin-top:2rem}</style></head><body><div class="c">
+<h1>Whatever you may be looking for is no longer here.</h1>
+<p>Maybe it never was. We can't remember, and neither will you, given enough time.<br>
+Either way, there is nothing at this address now.</p>
+<p><a href="https://arda0.net/ytflex/">Download something else</a> &middot; <a href="https://arda0.net/ytflex/faq">FAQ</a></p>
+<p class="m">Thank you for stopping by anyway.</p>
+</div><script>
+// Easter egg: the page never changes, only the #fragment in the address bar is typed out.
+const lines = ["never gonna give you up", "never gonna let you down", "never gonna run around and desert you"];
+let li = 0, ci = 0, dir = 1;
+setInterval(() => {
+  if (document.hidden || !document.hasFocus()) return;  // leave the URL alone when unfocused (e.g. copying it)
+  ci += dir;
+  history.replaceState(null, "", "#" + lines[li].slice(0, ci).replace(/ /g, "-"));
+  if (ci >= lines[li].length && dir === 1) { dir = 0; setTimeout(() => { dir = -1; }, 1200); }
+  if (ci <= 0 && dir === -1) { li = (li + 1) % lines.length; dir = 1; }
+}, 110);
+</script></body></html>

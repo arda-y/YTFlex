@@ -118,7 +118,9 @@ def _add_missing_columns():
     Rows written before the column existed get the default value ("other").
     """
     with _engine.begin() as conn:
-        columns = {c["name"] for c in inspect(conn).get_columns("ytflex_bandwidth_records")}
+        columns = {
+            c["name"] for c in inspect(conn).get_columns("ytflex_bandwidth_records")
+        }
         if "client" not in columns:
             conn.execute(
                 text(

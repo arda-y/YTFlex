@@ -7,11 +7,13 @@ import os
 import random
 import config
 
+SLUG_LEN = 20
+
 
 def create_download_link(filedir: str, filename: str) -> str:
     """
     Creates a download link for the file
-    (also randomizes the filename base folder)
+    (the random folder name doubles as the public slug)
     Args:
         filename: FULL filename of the file, including the extension
     """
@@ -20,7 +22,7 @@ def create_download_link(filedir: str, filename: str) -> str:
     cdn_location = os.getenv("cdn_location", config.get("CDN_LOCATION"))
 
     random_string = "".join(
-        random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
+        random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=SLUG_LEN)
     )
     os.makedirs(
         os.path.join(filedir, random_string), exist_ok=True
@@ -30,6 +32,6 @@ def create_download_link(filedir: str, filename: str) -> str:
         os.path.join(filedir, filename), os.path.join(filedir, random_string, filename)
     )  # move file into the random folder we just created
 
-    return (
-        f"{ip_or_domain}/{quote(cdn_location)}/{quote(random_string)}/{quote(filename)}"
-    )
+    # The filename stays out of the URL: the app finds the file by slug and the
+    # Content-Disposition header restores the name on download.
+    return f"{ip_or_domain}/{quote(cdn_location)}/{quote(random_string)}"

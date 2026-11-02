@@ -1,13 +1,29 @@
+# YTFlex settings. The file is baked into the image, so a change needs a rebuild.
+
+# --- Server -------------------------------------------------------------------
+
 # Reverse proxied path to the API.
 # Required for Swagger UI at /docs to work properly.
 # Sync with: nginx reverse proxied path
 ROOT_PATH: "/ytflex" # type: str
 
-CDN_LOCATION: "ytflex" # type: str
-
 # The port API will listen on. This is the port that the API will be available on.
 # Sync with: docker-compose port argument, nginx reverse proxied port
 PORT: 2002 # type: int
+
+# --- Links --------------------------------------------------------------------
+
+# The IP or domain to use when generating the download link.
+# Has no effect on nginx or docker command, but is used in the API message returned.
+# Passing environment variable from docker run command will override this.
+IP_OR_DOMAIN: "https://arda0.net" # type: str
+
+# Public path segment between the domain and the slug in download links:
+# <IP_OR_DOMAIN>/<CDN_LOCATION>/<slug>. Sync with: nginx reverse proxied path.
+# Passing environment variable from docker run command will override this.
+CDN_LOCATION: "ytflex" # type: str
+
+# --- Downloads ----------------------------------------------------------------
 
 # The highest resolution the API can attempt to download.
 MAX_RES: 2160 # type: int
@@ -27,30 +43,27 @@ EXT_MAX_FILE_SIZE: 200 # type: int
 # slots are busy gets HTTP 503 right away. Read once at startup.
 MAX_CONCURRENT_DOWNLOADS: 3 # type: int
 
-# The IP or domain to use when generating the download link.
-# Has no effect on nginx or docker command, but is used in the API message returned.
-# Passing environment variable from docker run command will override this.
-IP_OR_DOMAIN: "https://cdn.arda0.net" # type: str
-
 # Max file age in seconds.
 # 3600 = 1 hour, 86400 = 1 day, 604800 = 1 week
 MAX_FILE_AGE: 3600 # type: int
+
+# SlowAPI limit for download endpoints.
+# https://slowapi.readthedocs.io/en/latest/#rate-limit-string-notation
+DOWNLOAD_RATE_LIMIT: "1/10 seconds;5/minute" # type: str
 
 # Sets if download jobs should be silent or not.
 # If set to false, the output from yt-dlp will not be shown.
 SHOW_YT_DLP_OUTPUT: true # type: bool
 
+# --- Network and security -----------------------------------------------------
+
 # Sets the allowed domains for CORS requests.
 # If the request is not from one of these domains, it will be rejected.
 # If you want to allow all domains, remove the already present domains and add "*".
 ALLOWED_DOMAINS: # type: list[str]
-#  - "*" # allows all domains, but is not recommended for production
+  # - "*" # allows all domains, but is not recommended for production
   - "https://ytflex.vercel.app"
   - "https://arda0.net"
-
-# SlowAPI limit for download endpoints.
-# https://slowapi.readthedocs.io/en/latest/#rate-limit-string-notation
-DOWNLOAD_RATE_LIMIT: "1/10 seconds;5/minute" # type: str
 
 # Only these immediate peers are allowed to provide forwarded IP headers.
 # Keep this list narrow and include your reverse proxy container/host IPs.
@@ -62,6 +75,8 @@ TRUSTED_PROXIES: # type: list[str]
   - "172.19.0.1"
   - "172.20.0.1"
 
-# don't change unless you know what you're doing
-# url to internal bgutil provider container, used for youtubepot-bgutilhttp extractor
+# --- Internal -----------------------------------------------------------------
+
+# Don't change unless you know what you're doing.
+# URL to the internal bgutil provider container, used for the youtubepot-bgutilhttp extractor.
 BGUTIL_PROVIDER_URL: "http://bgutil-provider:4416" # type: str
