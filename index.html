@@ -1,169 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta property="og:title" content="ytflex | yet another youtube downloader">
-    <meta property="og:description" content="dead simple youtube downloader. no accounts, 2gb limit, 1 hour retention.">
-    <meta property="og:site_name" content="ytflex">
-    <meta property="og:image" content="https://arda0.net/assets/favicon">
-    <meta property="og:url" content="https://arda0.net/ytflex/">
-    <link rel="icon" href="/assets/favicon">
-
-    <title>ytflex | simple youtube downloader</title>
-    <script src="https://arda0.net/assets/tailwind.min.js"></script>
-    <script src="https://arda0.net/assets/qrcode.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-        }
-
-        /* Slate 900 */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Custom scrollbar for history */
-        #history-list::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        #history-list::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="darkreader-lock">
+<meta property="og:title" content="ytflex | simple youtube downloader">
+<meta property="og:description" content="dead simple youtube downloader. no accounts, 1gb limit, 1 hour retention.">
+<meta property="og:site_name" content="ytflex">
+<meta property="og:image" content="https://arda0.net/assets/favicon">
+<meta property="og:url" content="https://arda0.net/ytflex/">
+<link rel="icon" href="/assets/favicon">
+<title>ytflex | simple youtube downloader</title>
+<link rel="stylesheet" href="https://arda0.net/assets/theme-base.css?v=1">
+<script src="https://arda0.net/assets/theme.js?v=1"></script>
 </head>
+<body>
+<main>
+<div class="top"><a href="https://arda0.net/">&larr; home</a><div class="theme" role="group" aria-label="colour mode"><button type="button" data-mode="auto" aria-pressed="true">auto</button><button type="button" data-mode="light" aria-pressed="false">light</button><button type="button" data-mode="dark" aria-pressed="false">dark</button></div></div>
+<div class="titlerow"><h1>ytflex</h1><a href="/ytflex/faq">faq</a></div>
+<p class="sub">dead simple youtube downloader. no accounts, 1gb limit, 1 hour retention.</p>
 
-<header class="w-full max-w-2xl mx-auto px-4 py-8 flex justify-between items-end">
-    <div class="flex flex-col gap-1">
-        <a href="https://arda0.net" target="_self"
-            class="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors tracking-[0.2em] uppercase flex items-center gap-2">
-            <span>←</span> back to home
-        </a>
-        <h1 class="text-3xl font-black text-white tracking-tight">
-            ytflex
-        </h1>
+<div class="card">
+  <div class="stack">
+    <input type="text" id="urlInput" placeholder="Paste YouTube URL here..." aria-label="YouTube link">
+    <div class="grid2">
+      <div>
+        <label class="lbl" for="typeSelect">Type</label>
+        <select id="typeSelect"><option value="video">Video</option><option value="audio">Audio</option></select>
+      </div>
+      <div id="resContainer">
+        <label class="lbl" for="resSelect">Quality</label>
+        <select id="resSelect"><option value="2160">4K</option><option value="1440">1440p</option><option value="1080" selected>1080p</option><option value="720">720p</option><option value="480">480p</option></select>
+      </div>
     </div>
-    <a href="/ytflex/faq" target="_self"
-        class="text-xs font-bold text-slate-500 hover:text-blue-400 transition-colors tracking-[0.15em] uppercase px-3 py-1.5">
-        FAQ
-    </a>
-</header>
+    <label id="formatContainer" class="check"><input type="checkbox" id="mp4Check"> Force MP4 Compatibility</label>
+    <button type="button" id="dlBtn" class="btn block" onclick="handleFetch()">FETCH DOWNLOAD</button>
+  </div>
 
-<div class="max-w-2xl mx-auto px-4 mb-8">
-    <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
+  <div id="resultCard" class="result hidden">
+    <div class="vid">
+      <img id="thumb" src="" alt="">
+      <div><div id="videoTitle" class="t">Video Title</div><div id="videoMeta" class="m">0:00 &bull; mp4 &bull; 0MB</div></div>
+    </div>
+    <div class="stack">
+      <div class="copyrow">
+        <input type="text" id="finalUrlDisplay" readonly>
+        <button type="button" class="btn" onclick="copyToClipboard(document.getElementById('finalUrlDisplay').value, this)">COPY</button>
+      </div>
+      <div id="qrBox" class="qr hidden"><div id="qrHolder"></div><span class="muted">Scan to open the download link on another device</span></div>
+      <a id="finalDlLink" href="#" target="_blank" rel="noopener" class="btn ok block">DOWNLOAD NOW</a>
+    </div>
+  </div>
 </div>
 
-<main class="p-4 items-center justify-center flex">
-    <div class="max-w-lg w-full space-y-4">
-        <div class="glass-panel p-8 rounded-2xl shadow-2xl">
-            <header class="mb-8 text-center">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight mb-2">YTFlex</h1>
-                <div class="h-1 w-12 bg-blue-500 mx-auto rounded-full"></div>
-                <p class="text-slate-400 mt-4 text-sm font-mono italic">dead simple youtube downloader. no accounts, 2gb limit, 1 hour retention.</p>
-            </header>
+<div id="history-container" class="card hidden">
+  <h2 class="row"><span>recent downloads</span><button type="button" class="link" onclick="clearHistory()">clear</button></h2>
+  <div id="history-list"></div>
+</div>
 
-            <div class="space-y-4">
-                <div class="relative">
-                    <input type="text" id="urlInput" placeholder="Paste YouTube URL here..."
-                        class="w-full bg-black/40 border border-slate-700 rounded-xl px-4 py-4 text-sm text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
-                </div>
+<div class="card">
+  <h2>browser shortcut</h2>
+  <a href="ytflex.user.js" class="btn ghost block">ADD TO MY BROWSER</a>
+</div>
+</main>
+<script src="https://arda0.net/assets/qrcode.min.js"></script>
+<script>
 
-                <div class="flex gap-3">
-                    <div class="flex-1">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Type</label>
-                        <select id="typeSelect"
-                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
-                            <option value="video">Video</option>
-                            <option value="audio">Audio</option>
-                        </select>
-                    </div>
-                    <div id="resContainer" class="flex-1">
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Quality</label>
-                        <select id="resSelect"
-                            class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-sm outline-none">
-                            <option value="2160">4K</option>
-                            <option value="1440">1440p</option>
-                            <option value="1080" selected>1080p</option>
-                            <option value="720">720p</option>
-                            <option value="480">480p</option>
-                        </select>
-                    </div>
-                </div>
+        function el(tag, cls, text) {
+            const n = document.createElement(tag);
+            if (cls) n.className = cls;
+            if (text !== undefined) n.textContent = text;
+            return n;
+        }
 
-                <div id="formatContainer" class="flex items-center gap-2 px-1">
-                    <input type="checkbox" id="mp4Check" class="w-4 h-4 rounded accent-blue-500">
-                    <label for="mp4Check" class="text-xs text-slate-400 cursor-pointer">Force MP4 Compatibility</label>
-                </div>
+        // QR code of a link (qrcode-generator, hosted next to the theme). White background
+        // with a quiet zone, so it scans in dark mode too. Returns null if the lib is missing.
+        function qrImage(url, px) {
+            try {
+                const q = qrcode(0, 'M');
+                q.addData(url);
+                q.make();
+                const img = document.createElement('img');
+                img.src = q.createDataURL(4, 16);
+                img.width = px;
+                img.height = px;
+                img.alt = 'QR code of the link';
+                img.style.imageRendering = 'pixelated';
+                return img;
+            } catch (err) {
+                console.error('QR failed:', err);
+                return null;
+            }
+        }
 
-                <button onclick="handleFetch()" id="dlBtn"
-                    class="w-full bg-blue-600 hover:bg-blue-500 font-bold py-4 rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20">
-                    <i data-lucide="zap" class="w-4 h-4"></i> FETCH DOWNLOAD
-                </button>
-            </div>
+        // Pop-up with a big QR code. Closes on the X, a click outside the card, or Escape.
+        function showQrModal(url, title) {
+            const img = qrImage(url, 256);
+            if (!img) return;
+            const overlay = el('div', 'overlay');
+            const close = () => {
+                overlay.remove();
+                document.removeEventListener('keydown', onKey);
+            };
+            const onKey = (e) => { if (e.key === 'Escape') close(); };
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+            document.addEventListener('keydown', onKey);
 
-            <div id="resultCard" class="mt-8 pt-8 border-t border-slate-700/50 hidden">
-                <div class="flex gap-4 mb-4">
-                    <img id="thumb" src="" class="w-24 h-16 object-cover rounded-lg bg-slate-800 ring-1 ring-white/10">
-                    <div class="flex-1 min-w-0">
-                        <h3 id="videoTitle" class="font-bold truncate text-sm text-white">Video Title</h3>
-                        <p id="videoMeta" class="text-[10px] text-slate-500 font-mono mt-1">0:00 • mp4 • 0MB</p>
-                    </div>
-                </div>
+            const card = el('div', 'modal');
+            const x = el('button', 'x', '×');
+            x.setAttribute('aria-label', 'Close');
+            x.addEventListener('click', close);
+            card.append(x, el('div', 'nm', title), img, el('div', 'muted', 'Scan to open the link on another device'));
+            overlay.append(card);
+            document.body.append(overlay);
+        }
 
-                <div class="relative group mb-3">
-                    <input type="text" id="finalUrlDisplay" readonly
-                        class="w-full bg-black/40 border border-slate-700 rounded-lg pl-3 pr-20 py-2.5 text-xs text-blue-300 font-mono focus:outline-none">
-                    <button onclick="copyToClipboard(document.getElementById('finalUrlDisplay').value, this)"
-                        class="absolute right-1.5 top-1.5 bottom-1.5 bg-slate-700 hover:bg-slate-600 text-white px-3 rounded text-[10px] font-bold transition-all">
-                        COPY
-                    </button>
-                </div>
-
-                <div id="qrBox" class="hidden flex flex-col items-center gap-1 mb-3">
-                    <div id="qrHolder"></div>
-                    <span class="text-[10px] text-slate-500">Scan to open the download link on another device</span>
-                </div>
-
-                <a id="finalDlLink" href="#" target="_blank"
-                    class="w-full bg-green-600 hover:bg-green-500 text-white text-center font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
-                    <i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD NOW
-                </a>
-            </div>
-        </div>
-
-        <div id="history-container" class="glass-panel p-4 rounded-xl hidden">
-            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-widest flex justify-between">
-                <span>Recent Downloads</span>
-                <button onclick="clearHistory()" class="hover:text-red-400 transition-colors">Clear</button>
-            </h3>
-            <div id="history-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-            </div>
-        </div>
-
-        <div class="glass-panel p-4 rounded-xl">
-            <h3 class="text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-widest">Browser shortcut</h3>
-            <p class="text-xs text-slate-400 mb-3">
-                Adds Video and Audio buttons under the title on every YouTube video page.
-                Needs a userscript manager such as Tampermonkey or Violentmonkey.
-            </p>
-            <a href="ytflex.user.js"
-                class="w-full bg-slate-700 hover:bg-slate-600 text-white text-center font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
-                <i data-lucide="puzzle" class="w-4 h-4"></i> ADD TO MY BROWSER
-            </a>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        lucide.createIcons();
+        async function copyToClipboard(text, btn) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = btn.innerText;
+                btn.innerText = 'COPIED!';
+                setTimeout(() => { btn.innerText = originalText; }, 1500);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        }
 
         // test instances (served from a bare IP:port) talk to themselves, the real site to the public URL
         const apiUrl = location.hostname === "arda0.net" ? "https://arda0.net/ytflex" : location.origin;
@@ -175,15 +137,15 @@
 
         // How long the server keeps a file. Keep in sync with MAX_FILE_AGE in config.yaml (seconds).
         const FILE_LIFETIME_MS = 3600 * 1000;
+        const FETCH_LABEL = 'FETCH DOWNLOAD';
 
-        // Initialize History, then drop expired entries while the page stays open
-        window.onload = renderHistory;
+        window.addEventListener('load', renderHistory);
         setInterval(renderHistory, 30000);
 
         typeSelect.addEventListener('change', (e) => {
             const isVideo = e.target.value === 'video';
-            resContainer.style.display = isVideo ? 'block' : 'none';
-            formatContainer.style.display = isVideo ? 'flex' : 'none';
+            resContainer.classList.toggle('hidden', !isVideo);
+            formatContainer.classList.toggle('hidden', !isVideo);
         });
 
         async function handleFetch() {
@@ -195,7 +157,7 @@
 
             // UI State: Loading
             btn.disabled = true;
-            btn.innerHTML = `<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> FETCHING...`;
+            btn.innerHTML = '<span class="spin"></span> FETCHING...';
             resultCard.classList.add('hidden');
 
             // The download request blocks until the file is ready, so progress comes from polling.
@@ -203,7 +165,7 @@
                 b => (b % 36).toString(36)).join('');
             const stageLabel = { preparing: 'PREPARING', starting: 'STARTING', merging: 'MERGING',
                 converting: 'CONVERTING', finishing: 'FINISHING' };
-            const spinner = '<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>';
+            const spinner = '<span class="spin"></span>';
             const poll = setInterval(async () => {
                 try {
                     const r = await fetch(`${apiUrl}/progress/${progressId}`);
@@ -211,13 +173,13 @@
                     const p = await r.json();
                     if (p.stage === 'downloading') {
                         btn.innerHTML = `${spinner} DOWNLOADING ${p.percent}%`;
-                        btn.style.background = `linear-gradient(to right, #2563eb ${p.percent}%, #1e3a8a ${p.percent}%)`;
+                        btn.style.background = `linear-gradient(to right, var(--acc) ${p.percent}%, color-mix(in srgb, var(--acc) 35%, var(--card)) ${p.percent}%)`;
                     } else {
                         // no real percentage for conversion: show the stage and how long it has been running
                         const slow = p.stage === 'converting' || p.stage === 'merging';
                         btn.innerHTML = `${spinner} ${stageLabel[p.stage] || 'WORKING'}${slow ? ' · ' + p.elapsed + 's' : '...'}`;
                         btn.style.background = '';
-                        btn.classList.toggle('animate-pulse', slow);
+                        btn.classList.toggle('pulse', slow);
                     }
                 } catch (e) { /* keep the last label */ }
             }, 500);
@@ -244,7 +206,6 @@
                 const info = data[0][0];
 
                 if (info && info.link) {
-                    // Update UI
                     document.getElementById('thumb').src = info.metadata.thumbnail;
                     document.getElementById('videoTitle').innerText = info.metadata.title;
                     document.getElementById('videoMeta').innerText = `${info.metadata.duration} • ${info.metadata.extension} • ${info.metadata.filesize || 'N/A'}`;
@@ -257,7 +218,6 @@
                     showQr(info.link);
                     resultCard.classList.remove('hidden');
 
-                    // Save to History
                     saveToHistory(info.metadata.title, info.link, info.metadata.thumbnail);
                 }
             } catch (err) {
@@ -265,70 +225,11 @@
                 console.error(err);
             } finally {
                 clearInterval(poll);
-                btn.classList.remove('animate-pulse');
+                btn.classList.remove('pulse');
                 btn.style.background = '';
                 btn.disabled = false;
-                btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> FETCH DOWNLOAD`;
-                lucide.createIcons();
+                btn.textContent = FETCH_LABEL;
             }
-        }
-
-        // --- QR code ---
-        // QR code of a link (qrcode-generator, hosted next to tailwind). White background
-        // with a quiet zone, so it scans in dark mode too. Returns null if the lib is missing.
-        function qrImage(url, px) {
-            try {
-                const q = qrcode(0, 'M');
-                q.addData(url);
-                q.make();
-                const img = document.createElement('img');
-                img.src = q.createDataURL(4, 16);
-                img.width = px;
-                img.height = px;
-                img.alt = 'QR code of the link';
-                img.className = 'rounded bg-white';
-                img.style.imageRendering = 'pixelated';
-                return img;
-            } catch (err) {
-                console.error('QR failed:', err);
-                return null;
-            }
-        }
-
-        // Pop-up with a big QR code. Closes on the X, a click outside the card, or Escape.
-        function showQrModal(url, title) {
-            const img = qrImage(url, 256);
-            if (!img) return;
-            const overlay = document.createElement('div');
-            overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4';
-            const close = () => {
-                overlay.remove();
-                document.removeEventListener('keydown', onKey);
-            };
-            const onKey = (e) => { if (e.key === 'Escape') close(); };
-            overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-            document.addEventListener('keydown', onKey);
-
-            const card = document.createElement('div');
-            card.className = 'relative bg-slate-900 border border-slate-700 rounded-2xl p-6 flex flex-col items-center gap-3 max-w-full';
-
-            const x = document.createElement('button');
-            x.className = 'absolute top-2 right-3 text-slate-400 hover:text-white text-xl leading-none';
-            x.setAttribute('aria-label', 'Close');
-            x.textContent = '\u00D7';
-            x.addEventListener('click', close);
-
-            const name = document.createElement('div');
-            name.className = 'text-xs font-mono text-slate-300 max-w-[16rem] truncate';
-            name.textContent = title;
-
-            const hint = document.createElement('div');
-            hint.className = 'text-[10px] text-slate-500';
-            hint.textContent = 'Scan to open the link on another device';
-
-            card.append(x, name, img, hint);
-            overlay.append(card);
-            document.body.append(overlay);
         }
 
         function showQr(url) {
@@ -374,51 +275,38 @@
             // property assignment (img.src, a.href) never parse their input as
             // markup, so a crafted title cannot inject HTML/script here.
             historyList.replaceChildren(...history.map(item => {
-                const row = document.createElement('div');
-                row.className = 'flex items-center justify-between bg-black/30 p-2 rounded-lg border border-white/5 group';
+                const row = el('div', 'hrow');
+                const line = el('div', 'line');
 
-                const left = document.createElement('div');
-                left.className = 'flex items-center gap-3 truncate pr-2';
-
-                const img = document.createElement('img');
+                const left = el('div', 'left');
+                const img = el('img', 'thumb');
                 img.src = item.thumb;
-                img.className = 'w-10 h-7 object-cover rounded shadow-sm';
+                img.alt = '';
 
-                const textWrap = document.createElement('div');
-                textWrap.className = 'flex flex-col truncate';
-
-                const nameSpan = document.createElement('span');
-                nameSpan.className = 'text-[11px] font-medium text-slate-300 truncate';
-                nameSpan.textContent = item.name;
-
-                const dateSpan = document.createElement('span');
-                dateSpan.className = 'text-[8px] text-slate-600 uppercase font-bold';
-                dateSpan.textContent = item.date;
-
-                textWrap.append(nameSpan, dateSpan);
+                const textWrap = el('div', 'txt');
+                const nameSpan = el('span', 'nm', item.name);
+                nameSpan.title = item.name;
+                textWrap.append(nameSpan, el('span', 'dt', item.date));
                 left.append(img, textWrap);
 
-                const right = document.createElement('div');
-                right.className = 'flex gap-1';
+                const right = el('div', 'btns');
 
-                const openLink = document.createElement('a');
+                const openLink = el('a', 'chip', 'DOWNLOAD');
                 openLink.href = item.url;
                 openLink.target = '_blank';
-                openLink.className = 'text-[9px] bg-blue-900/40 hover:bg-blue-800 px-2 py-1.5 rounded text-blue-300 transition-colors font-bold';
-                openLink.textContent = 'DOWNLOAD';
+                openLink.rel = 'noopener';
 
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-white transition-colors font-bold';
-                copyBtn.textContent = 'COPY';
+                const copyBtn = el('button', 'chip', 'COPY');
+                copyBtn.type = 'button';
                 copyBtn.addEventListener('click', () => copyToClipboard(item.url, copyBtn));
 
-                const qrBtn = document.createElement('button');
-                qrBtn.className = 'text-[9px] bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded text-white transition-colors font-bold';
-                qrBtn.textContent = 'QR';
+                const qrBtn = el('button', 'chip', 'QR');
+                qrBtn.type = 'button';
                 qrBtn.addEventListener('click', () => showQrModal(item.url, item.name));
 
                 right.append(openLink, copyBtn, qrBtn);
-                row.append(left, right);
+                line.append(left, right);
+                row.append(line);
                 return row;
             }));
         }
@@ -427,22 +315,6 @@
             localStorage.removeItem('ytflex_history');
             renderHistory();
         }
-
-        async function copyToClipboard(text, btn) {
-            try {
-                await navigator.clipboard.writeText(text);
-                const originalText = btn.innerText;
-                btn.innerText = 'COPIED!';
-                btn.classList.replace('bg-slate-700', 'bg-green-700');
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.replace('bg-green-700', 'bg-slate-700');
-                }, 1500);
-            } catch (err) {
-                console.error('Failed to copy', err);
-            }
-        }
-    </script>
-</main>
-
+</script>
+</body>
 </html>

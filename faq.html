@@ -1,137 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta property="og:title" content="ytflex | FAQ">
-    <meta property="og:description" content="upload limits, retention, and data policy for ytflex.">
-    <meta property="og:site_name" content="ytflex">
-    <meta property="og:image" content="https://arda0.net/assets/favicon">
-    <meta property="og:url" content="https://arda0.net/ytflex/faq">
-    <link rel="icon" href="/assets/favicon">
-
-    <title>ytflex | FAQ</title>
-    <script src="https://arda0.net/assets/tailwind.min.js"></script>
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-        }
-
-        /* Slate 900 */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="darkreader-lock">
+<meta property="og:title" content="ytflex | faq">
+<meta property="og:description" content="limits and data policy for ytflex.">
+<meta property="og:site_name" content="ytflex">
+<meta property="og:image" content="https://arda0.net/assets/favicon">
+<meta property="og:url" content="https://arda0.net/ytflex/faq">
+<link rel="icon" href="/assets/favicon">
+<title>ytflex | faq</title>
+<link rel="stylesheet" href="https://arda0.net/assets/theme-base.css?v=1">
+<script src="https://arda0.net/assets/theme.js?v=1"></script>
 </head>
-
-<header class="w-full max-w-2xl mx-auto px-4 py-8 flex justify-between items-end">
-    <div class="flex flex-col gap-1">
-        <a href="/ytflex/" target="_self"
-            class="text-[10px] font-bold text-blue-400 hover:text-blue-300 transition-colors tracking-[0.2em] uppercase flex items-center gap-2">
-            <span>←</span> back to ytflex
-        </a>
-        <h1 class="text-3xl font-black text-white tracking-tight">
-            ytflex
-        </h1>
-    </div>
-</header>
-
-<div class="max-w-2xl mx-auto px-4 mb-8">
-    <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-slate-800 to-transparent"></div>
-</div>
-
-<main class="p-4 flex justify-center">
-    <div class="max-w-lg w-full space-y-4 pb-16">
-        <header class="mb-4 text-center">
-            <h1 class="text-2xl font-extrabold text-blue-400 tracking-tight mb-2">FAQ</h1>
-            <div class="h-1 w-12 bg-blue-500 mx-auto rounded-full"></div>
-        </header>
-
-        <div id="faq-list" class="space-y-4"></div>
-    </div>
+<body>
+<main>
+<div class="top"><a href="/ytflex/">&larr; back to ytflex</a><div class="theme" role="group" aria-label="colour mode"><button type="button" data-mode="auto" aria-pressed="true">auto</button><button type="button" data-mode="light" aria-pressed="false">light</button><button type="button" data-mode="dark" aria-pressed="false">dark</button></div></div>
+<h1>faq</h1>
+<p class="sub">limits and data policy.</p>
+<section class="qa"><h2>How long does ytflex keep my file?</h2><p>ytflex keeps your file for 1 hour. After 1 hour, your file is deleted, along with its link. rest assured, this is intentional.</p></section>
+<section class="qa"><h2>What are the limits?</h2><p>A downloaded file cannot be larger than 1GB (200MB when you use the browser extension, 100MB when you convert to MP4). For video downloads, audio is added on top of this limit, so the final file can be a little larger.</p><p>ytflex also limits how often you can request a download: 1 request per 10 seconds, and 5 requests per minute, per IP address. If you go over this, ytflex rejects the request with an error. Wait a short time, then try again.</p></section>
+<section class="qa"><h2>What data does ytflex collect?</h2><p>ytflex records your IP address for each download. ytflex uses this to enforce the limits above, as well as preventing possible abuse.</p><p>ytflex keeps an anonymous row for every download, with its size and time information. the IP address is blanked after 7 days. this is for analytic purposes only, and never shared with third parties.</p><p>ytflex does not collect any other data. anything else, like color preference, stays on your device.</p></section>
+<section class="qa"><h2>Who is responsible for what I download?</h2><p>ytflex simplifies downloading content from the internet. ytflex takes zero liability for what the downloaded content is used for.</p><p>You, the end user, are responsible for what you do with ytflex and how you use or distribute the resulting content. Be mindful when using content made by others, and credit the original creator. Make sure you do not violate any terms or licenses.</p></section>
+<section class="qa"><h2>How do I report abuse?</h2><p>To report a download, contact <a href="mailto:me@arda0.net">me@arda0.net</a>. We will do our best to comply manually.</p></section>
 </main>
-
-<script>
-    const faqs = [
-        {
-            q: 'How long does ytflex keep my file?',
-            a: `<p class="text-slate-300 text-sm leading-relaxed">
-                ytflex keeps your file for 1 hour. After 1 hour, ytflex deletes the file. Download or save the file
-                before the hour ends.
-            </p>`,
-        },
-        {
-            q: 'What are the limits?',
-            a: `<p class="text-slate-300 text-sm leading-relaxed">
-                A downloaded file cannot be larger than 2GB (200MB when you use the browser extension). For video downloads, audio is added on top of this
-                limit, so the final file can be a little larger.
-            </p>
-            <p class="text-slate-300 text-sm leading-relaxed">
-                ytflex also limits how often you can request a download: 1 request per 10 seconds, and 5 requests
-                per minute, per IP address. If you go over this, ytflex rejects the request with an error. Wait a
-                short time, then try again.
-            </p>`,
-        },
-        {
-            q: 'What data does ytflex collect?',
-            a: `<p class="text-slate-300 text-sm leading-relaxed">
-                ytflex uses your IP address only to enforce the rate limit above. ytflex does not require an
-                account. ytflex does not collect your name or email. ytflex does not link your IP address to a
-                profile.
-            </p>
-            <p class="text-slate-300 text-sm leading-relaxed">
-                ytflex does not keep your IP address forever. Once its cooldown passes, ytflex removes it. ytflex
-                never links your IP address to the video you downloaded, so there is no way to tie a download
-                back to the person who requested it.
-            </p>`,
-        },
-        {
-            q: 'Who is responsible for what I download?',
-            a: `<p class="text-slate-300 text-sm leading-relaxed">
-                ytflex simplifies downloading content from the internet. ytflex takes zero liability for what
-                the downloaded content is used for.
-            </p>
-            <p class="text-slate-300 text-sm leading-relaxed">
-                You, the end user, are responsible for what you do with ytflex and how you use or distribute
-                the resulting content. Be mindful when using content made by others, and credit the original
-                creator. Make sure you do not violate any terms or licenses.
-            </p>`,
-        },
-        {
-            q: 'How do I report abuse?',
-            a: `<p class="text-slate-300 text-sm leading-relaxed">
-                ytflex has no way of detecting abusive behavior automatically, because ytflex is fully
-                anonymous.
-            </p>
-            <p class="text-slate-300 text-sm leading-relaxed">
-                To report a download, contact
-                <a href="mailto:me@arda0.net" class="text-blue-400 hover:text-blue-300 transition-colors">me@arda0.net</a>.
-                We will do our best to comply manually.
-            </p>`,
-        },
-    ];
-
-    const faqList = document.getElementById('faq-list');
-
-    // faqs is a fixed, hardcoded array above (not user input), so building the
-    // answer body via innerHTML here is safe.
-    faqs.forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'glass-panel p-6 rounded-2xl shadow-2xl space-y-2';
-
-        const h3 = document.createElement('h3');
-        h3.className = 'text-[10px] font-bold text-blue-400 uppercase tracking-widest';
-        h3.textContent = f.q;
-
-        card.appendChild(h3);
-        card.insertAdjacentHTML('beforeend', f.a);
-        faqList.appendChild(card);
-    });
-</script>
-
+</body>
 </html>

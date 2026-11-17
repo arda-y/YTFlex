@@ -77,6 +77,10 @@ A request that arrives when all download slots are busy gets 503. A request over
 
 Both download routes accept `client=ext` (the userscript sets it and gets the lower size limit) and `progress_id=<id>` (8 to 32 letters and digits that you choose, to poll `/progress/<id>` while the request runs).
 
+## Web page
+
+`index.html` and `faq.html` are plain HTML with no build step. They load their colours and the light/dark switch from `https://arda0.net/assets/theme-base.css` and `https://arda0.net/assets/theme.js`, and the QR code from `https://arda0.net/assets/qrcode.min.js`. To host them yourself, copy those three files to your server and change the three links at the top of each page. The colours are in one block at the top of `theme-base.css`.
+
 ## Userscript
 
 `userscript/ytflex-send.user.js` adds download buttons to YouTube. It talks to `https://arda0.net/ytflex` by default. To use your own instance, click the userscript manager's icon, choose **YTFlex: set server address** and enter your instance's address (leave it empty to go back to the default).

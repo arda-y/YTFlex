@@ -33,7 +33,8 @@ MAX_RES: 2160 # type: int
 # This only limits the filesize of the video, not the audio.
 # If a video is 197mb and audio is 5mb, the video will be 202mb and will be downloaded anyway.
 # Max audio file size is the same when downloading audio only.
-MAX_FILE_SIZE: 2000 # type: int
+# Converting to mp4 uses a tenth of this limit (100 MB at 1000), because the conversion is heavy.
+MAX_FILE_SIZE: 1000 # type: int
 
 # Lower limit (MB) for requests that come from the browser extension (userscript).
 # The userscript adds client=ext to its requests. Same rules as MAX_FILE_SIZE.
